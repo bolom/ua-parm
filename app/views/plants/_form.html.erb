@@ -1,0 +1,8 @@
+<%= form_with(model: plant, class: "mb-7") do |form| %>
+  <div class="mb-5">
+    <%= form.text_field :scientific, placeholder: "scientific", class: "inline-block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96" %>
+    <%= form.text_field :pharmacopoeia, placeholder: "pharmacopoeia", class: "inline-block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96" %>
+    <%= form.text_field :family, placeholder: "family", class: "inline-block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96" %>
+    <%= form.submit "Save", class: "btn py-2 ml-2 bg-blue-600 text-white" %>
+  </div>
+<% end %>
