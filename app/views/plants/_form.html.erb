@@ -1,0 +1,20 @@
+<%= form_with(model: plant, class: "") do |form| %>
+
+<% if plant.errors.any? %>
+   <div class="error-message">
+     <%= plant.errors.full_messages.to_sentence.capitalize %>
+   </div>
+ <% end %>
+  <div class="mb-5">
+    <%= form.text_field :scientific, placeholder: "scientific", class: "inline-block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96" %>
+  </div>
+  <div class="mb-5">
+    <%= form.text_field :pharmacopoeia, placeholder: "pharmacopoeia", class: "inline-block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96" %>
+  </div>
+  <div class="mb-5">
+    <%= form.text_field :family, placeholder: "family", class: "inline-block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96" %>
+  </div>
+  <div class="flex items-center justify-between">
+    <%= form.submit "Save", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" %>
+  </div>
+<% end %>

@@ -1,0 +1,12 @@
+<tr>
+  <td><%= plant.pharmacopoeia %></td>
+  <td><%= plant.family %></td>
+  <td><%= plant.pharmacopoeia %></td>
+  <td>
+      <%= link_to "Edit", edit_plant_path(plant),class: "btn bg-gray-100"%>
+      <%= button_to "Delete", plant_path(plant),
+                      method: :delete,
+                      form: { data: { turbo_confirm: "Are you sure?" } },
+                      class: "btn bg-red-100" %>
+  </td>
+</tr>
