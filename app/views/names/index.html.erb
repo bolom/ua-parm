@@ -1,0 +1,26 @@
+<% if notice.present? %>
+<p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice">
+  <%= notice %>
+</p>
+<% end %>
+<h1 class="font-bold text-2xl">Names Manager</h1>
+<!-- add new name -->
+<div class="mt-4">
+  <%= render "form", name: @name %>
+</div>
+<!-- all names -->
+<div id="names" class="mt-5">
+    <table class="table-auto">
+      <thead>
+      <tr>
+        <th>Plant</th>
+        <th>Label</th>
+        <th>Category</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+        <%= render @names %>
+      <tbody>
+    </table>
+  </div>

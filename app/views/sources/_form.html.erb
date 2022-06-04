@@ -1,0 +1,32 @@
+<%= form_with(model: source, class: "") do |form| %>
+
+<% if source.errors.any? %>
+   <div class="error-message">
+     <%= source.errors.full_messages.to_sentence.capitalize %>
+   </div>
+ <% end %>
+  <div class="mb-5">
+    <%= form.text_field :title, required: true, placeholder: "title", class: "inline-block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96" %>
+  </div>
+  <div class="mb-5">
+    <%= form.text_field :publication_date, placeholder: "publication_date", class: "inline-block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96" %>
+  </div>
+  <div class="mb-5">
+    <%= form.text_field :edition_reference, placeholder: "edition_reference", class: "inline-block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96" %>
+  </div>
+  <div class="mb-5">
+    <%= form.text_field :web_link, placeholder: "web_link", class: "inline-block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96" %>
+  </div>
+  <div class="mb-5">
+    <%= form.text_field :category, placeholder: "category", class: "inline-block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96" %>
+  </div>
+  <div class="mb-5">
+    <%= form.text_field :origine, placeholder: "origine", class: "inline-block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96" %>
+  </div>
+  <div class="mb-5">
+    <%= form.text_field :note, placeholder: "note", class: "inline-block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96" %>
+  </div>
+  <div class="flex items-center justify-between">
+    <%= form.submit "Save", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" %>
+  </div>
+<% end %>

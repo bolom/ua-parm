@@ -1,0 +1,17 @@
+<tr>
+  <td><%= source.title %></td>
+  <td><%= source.publication_date %></td>
+  <td><%= source.edition_reference %></td>
+  <td><%= source.web_link %></td>
+  <td><%= source.category %></td>
+  <td><%= source.origine %></td>
+  <td><%= source.note %></td>
+
+  <td>
+      <%= link_to "Edit", edit_source_path(source),class: "btn bg-gray-100"%>
+      <%= button_to "Delete", source_path(source),
+                      method: :delete,
+                      form: { data: { turbo_confirm: "Are you sure?" } },
+                      class: "btn bg-red-100" %>
+  </td>
+</tr>

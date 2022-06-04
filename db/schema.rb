@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_05_27_192623) do
+ActiveRecord::Schema[7.0].define(version: 2022_06_04_113525) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -48,6 +48,15 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_27_192623) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "person_sources", force: :cascade do |t|
+    t.bigint "person_id", null: false
+    t.bigint "source_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["person_id"], name: "index_person_sources_on_person_id"
+    t.index ["source_id"], name: "index_person_sources_on_source_id"
+  end
+
   create_table "plants", force: :cascade do |t|
     t.string "family"
     t.string "pharmacopoeia"
@@ -61,11 +70,13 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_27_192623) do
     t.string "publication_date"
     t.string "edition_reference"
     t.string "web_link"
-    t.string "type"
+    t.string "category"
     t.string "origine"
     t.string "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "person_sources", "people"
+  add_foreign_key "person_sources", "sources"
 end

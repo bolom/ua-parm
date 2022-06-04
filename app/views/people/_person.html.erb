@@ -1,0 +1,13 @@
+<tr>
+  <td><%= person.first_name %></td>
+  <td><%= person.last_name %></td>
+  <td><%= person.category %></td>
+
+  <td>
+      <%= link_to "Edit", edit_person_path(person),class: "btn bg-gray-100"%>
+      <%= button_to "Delete", person_path(person),
+                      method: :delete,
+                      form: { data: { turbo_confirm: "Are you sure?" } },
+                      class: "btn bg-red-100" %>
+  </td>
+</tr>

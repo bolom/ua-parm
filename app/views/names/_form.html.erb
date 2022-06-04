@@ -1,0 +1,28 @@
+<%= form_with(model: name, class: "#{dom_id(name)}_form") do |form| %>
+<% if name.errors.any? %>
+  <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
+    <h2>
+      <%= pluralize(name.errors.count, "error") %> prohibited this name from being
+      saved:
+    </h2>
+
+    <ul>
+      <% name.errors.each do |error| %>
+      <li><%= error.full_message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+  <div class="mb-5">
+    <%= form.collection_select :plant_id, Plant.all, :id, :scientific, {}, {class: "shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96"} %>
+  </div>
+  <div class="mb-5">
+    <%= form.text_field :label, placeholder: "label", class: "inline-block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96" %>
+  </div>
+  <div class="mb-5">
+    <%= form.select :category, ["common", "synonym"] , class: "shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96"%>
+  </div>
+  <div class="flex items-center justify-between">
+    <%= form.submit "Save", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" %>
+  </div>
+<% end %>
