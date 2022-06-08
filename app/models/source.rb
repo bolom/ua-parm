@@ -7,7 +7,23 @@ class Source < ApplicationRecord
   #validates :origine, presence: true
   #validates :note, presence: true
 
-  has_many :person_sources
-  has_many :people, through: :person_sources
+  has_many :citations, dependent: :destroy
+
+  has_many :person_sources, dependent: :destroy
+  has_many :people, -> { distinct }, through: :person_sources
+  accepts_nested_attributes_for :people
+
+  has_many :plant_sources, dependent: :destroy
+  has_many :plants, -> { distinct }, through: :plant_sources
+  accepts_nested_attributes_for :plants
+
+  has_many :area_sources, dependent: :destroy
+  has_many :areas, -> { distinct }, through: :area_sources
+  accepts_nested_attributes_for :areas
+
+  has_many :name_sources, dependent: :destroy
+  has_many :names, -> { distinct }, through: :name_sources
+  accepts_nested_attributes_for :names
+
 
 end

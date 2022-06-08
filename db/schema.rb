@@ -10,9 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_04_113525) do
+ActiveRecord::Schema[7.0].define(version: 2022_06_06_133700) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "area_sources", force: :cascade do |t|
+    t.bigint "source_id", null: false
+    t.bigint "area_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["area_id"], name: "index_area_sources_on_area_id"
+    t.index ["source_id"], name: "index_area_sources_on_source_id"
+  end
 
   create_table "areas", force: :cascade do |t|
     t.string "name"
@@ -29,6 +38,24 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_04_113525) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["source_id"], name: "index_citations_on_source_id"
+  end
+
+  create_table "name_citations", force: :cascade do |t|
+    t.bigint "citation_id", null: false
+    t.bigint "name_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["citation_id"], name: "index_name_citations_on_citation_id"
+    t.index ["name_id"], name: "index_name_citations_on_name_id"
+  end
+
+  create_table "name_sources", force: :cascade do |t|
+    t.bigint "source_id", null: false
+    t.bigint "name_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name_id"], name: "index_name_sources_on_name_id"
+    t.index ["source_id"], name: "index_name_sources_on_source_id"
   end
 
   create_table "names", force: :cascade do |t|
@@ -57,6 +84,15 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_04_113525) do
     t.index ["source_id"], name: "index_person_sources_on_source_id"
   end
 
+  create_table "plant_sources", force: :cascade do |t|
+    t.bigint "source_id", null: false
+    t.bigint "plant_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["plant_id"], name: "index_plant_sources_on_plant_id"
+    t.index ["source_id"], name: "index_plant_sources_on_source_id"
+  end
+
   create_table "plants", force: :cascade do |t|
     t.string "family"
     t.string "pharmacopoeia"
@@ -77,6 +113,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_04_113525) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "area_sources", "areas"
+  add_foreign_key "area_sources", "sources"
+  add_foreign_key "name_citations", "citations"
+  add_foreign_key "name_citations", "names"
+  add_foreign_key "name_sources", "names"
+  add_foreign_key "name_sources", "sources"
   add_foreign_key "person_sources", "people"
   add_foreign_key "person_sources", "sources"
+  add_foreign_key "plant_sources", "plants"
+  add_foreign_key "plant_sources", "sources"
 end

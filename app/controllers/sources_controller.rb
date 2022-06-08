@@ -39,6 +39,6 @@ class SourcesController < ApplicationController
 
   private
   def source_params
-    params.require(:source).permit(:title, :publication_date, :edition_reference, :web_link, :category, :origine, :note)
+    params.require(:source).permit(:title, :publication_date, :edition_reference, :web_link, :category, :origine, :note, person_ids:[], people_attributes: [:first_name, :last_name], plant_ids:[], plants_attributes: [:scientific, :pharmacopoeia, :family], area_ids:[], areas_attributes: [:name], name_ids:[], names_attributes: [:label, :category] )
   end
 end

@@ -5,6 +5,54 @@
      <%= source.errors.full_messages.to_sentence.capitalize %>
    </div>
  <% end %>
+
+ <div class="mb-5">
+ <h2>People</h2>
+ <div class="mb-5">
+       <%= form.collection_check_boxes :person_ids, Person.all, :id, :first_name %>
+</div>
+<div class="mb-5">
+  <%= form.fields_for :people, source.people.build do |people_fields| %>
+  <%= people_fields.text_field :first_name, placeholder: "first_name" %>
+  <%= people_fields.text_field :last_name, placeholder: "last_name" %>
+  <% end %>
+
+
+<div class="mb-5">
+<h3>Plants</h3>
+<div class="mb-5">
+<%= form.collection_check_boxes :plant_ids, Plant.all, :id, :scientific %>
+</div>
+<div class="mb-5">
+<%= form.fields_for :plants, source.plants.build do |plants_fields| %>
+<%= plants_fields.text_field :scientific, placeholder: "scientific" %>
+<%= plants_fields.text_field :pharmacopoeia, placeholder: "pharmacopoeia" %>
+<%= plants_fields.text_field :family, placeholder: "family" %>
+<% end %>
+
+<div class="mb-5">
+<h3>Areas</h3>
+<div class="mb-5">
+<%= form.collection_check_boxes :area_ids, Area.all, :id, :name %>
+</div>
+<div class="mb-5">
+<%= form.fields_for :areas, source.areas.build do |areas_fields| %>
+<%= areas_fields.text_field :name, placeholder: "name" %>
+<% end %>
+
+<div class="mb-5">
+<h4>Names</h4>
+<div class="mb-5">
+<%= form.collection_check_boxes :name_ids, Name.all, :id, :label %>
+</div>
+<div class="mb-5">
+<%= form.fields_for :names, source.names.build do |names_fields| %>
+<%= names_fields.text_field :label, placeholder: "label" %>
+<%= names_fields.text_field :category, placeholder: "category" %>
+
+<% end %>
+
+  </div>
   <div class="mb-5">
     <%= form.text_field :title, required: true, placeholder: "title", class: "inline-block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96" %>
   </div>

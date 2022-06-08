@@ -1,0 +1,18 @@
+
+<tr>
+  <td> <%=citation.source.try(:title) %></td>
+
+  <td><%= citation.pratique %></td>
+  <td><%= citation.text %></td>
+  <td><%= citation.pages %></td>
+  <td><%= citation.note %></td>
+
+
+  <td>
+      <%= link_to "Edit", edit_citation_path(citation),class: "btn bg-gray-100"%>
+      <%= button_to "Delete", citation_path(citation),
+                      method: :delete,
+                      form: { data: { turbo_confirm: "Are you sure?" } },
+                      class: "btn bg-red-100" %>
+  </td>
+</tr>
