@@ -1,8 +1,7 @@
-<div>
-  <h1 class="font-bold text-2xl mb-3">New Plant</h1>
-
-  <div id="<%= dom_id @plant %>">
+<div class="w-full">
+  <%= link_to sanitize("&larr; Back to plants"), plants_path %>
+  <h1 class="font-bold text-4xl">New Plants</h1>
+  <%= turbo_frame_tag @plant do %>
     <%= render "form", plant: @plant %>
-    <%= link_to "Never Mind", plants_path, class: "btn mb-3 bg-gray-100" %>
-  </div>
+  <% end %>
 </div>

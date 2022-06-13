@@ -9,3 +9,18 @@
   <%= render "form", name: @name %>
 </div>
 <!-- all names -->
+<div id="names" class="mt-5">
+    <table class="table-auto">
+      <thead>
+      <tr>
+        <th>Plant</th>
+        <th>Label</th>
+        <th>Category</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+        <%= render @names %>
+      <tbody>
+    </table>
+  </div>

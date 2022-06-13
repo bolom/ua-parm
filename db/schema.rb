@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_06_133700) do
+ActiveRecord::Schema[7.0].define(version: 2022_06_13_213217) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -37,6 +37,10 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_06_133700) do
     t.bigint "source_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "plants_id"
+    t.bigint "name_id"
+    t.index ["name_id"], name: "index_citations_on_name_id"
+    t.index ["plants_id"], name: "index_citations_on_plants_id"
     t.index ["source_id"], name: "index_citations_on_source_id"
   end
 
@@ -107,7 +111,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_06_133700) do
     t.string "edition_reference"
     t.string "web_link"
     t.string "category"
-    t.string "origine"
+    t.string "origin"
     t.string "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -115,6 +119,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_06_133700) do
 
   add_foreign_key "area_sources", "areas"
   add_foreign_key "area_sources", "sources"
+  add_foreign_key "citations", "names"
+  add_foreign_key "citations", "plants", column: "plants_id"
   add_foreign_key "name_citations", "citations"
   add_foreign_key "name_citations", "names"
   add_foreign_key "name_sources", "names"

@@ -1,29 +1,17 @@
-<% if notice.present? %>
-<p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice">
-  <%= notice %>
-</p>
-<% end %>
-<h1 class="font-bold text-2xl">Sources Manager</h1>
-<!-- add new sources -->
-<div class="mt-4">
-  <%= render "form",source: @source %>
+<div class="w-full">
+  <% if notice.present? %>
+  <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+    <div class="flex justify-between items-center" turbo_frame_tag="new_source">
+      <h1 class="font-bold text-4xl">Sources</h1>
+      <%= link_to 'New source', new_source_path,
+                              class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium",
+                              data: { turbo_frame: dom_id(@source)} %>
+    </div>
+    <%= turbo_frame_tag @sources do %>
+      <ol class="mt-5">
+        <%= render  @sources %>
+      </ol>
+    <% end %>
 </div>
-<!-- all sources -->
-<div id="plants" class="mt-5">
-    <table class="table-auto">
-      <thead>
-      <tr>
-        <th>Title</th>
-        <th>Publication Date</th>
-        <th>Edition Reference</th>
-        <th>Web Link</th>
-        <th>Category</th>
-        <th>Origin</th>
-        <th>Note</th>
-      </tr>
-    </thead>
-    <tbody>
-        <%= render @sources %>
-      <tbody>
-    </table>
-  </div>

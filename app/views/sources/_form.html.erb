@@ -11,6 +11,7 @@
  <div class="mb-5">
        <%= form.collection_check_boxes :person_ids, Person.all, :id, :first_name %>
 </div>
+<!--
 <div class="mb-5">
   <%= form.fields_for :people, source.people.build do |people_fields| %>
   <%= people_fields.text_field :first_name, placeholder: "first_name" %>
@@ -53,6 +54,8 @@
 <% end %>
 
   </div>
+
+  -->
   <div class="mb-5">
     <%= form.text_field :title, required: true, placeholder: "title", class: "inline-block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96" %>
   </div>

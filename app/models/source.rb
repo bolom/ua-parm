@@ -25,5 +25,5 @@ class Source < ApplicationRecord
   has_many :names, -> { distinct }, through: :name_sources
   accepts_nested_attributes_for :names
 
-
+  
 end

@@ -1,26 +1,30 @@
-<% if notice.present? %>
-<p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice">
-  <%= notice %>
-</p>
-<% end %>
-<h1 class="font-bold text-2xl">Plants Manager</h1>
-<!-- add new plant -->
-<div class="mt-4">
-  <%= render "form", plant: @plant %>
-</div>
-<!-- all plants -->
-<div id="plants" class="mt-5">
-    <table class="table-auto">
-      <thead>
-      <tr>
-        <th>Scientific</th>
-        <th>Pharmacopoeia</th>
-        <th>Family</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-        <%= render @plants %>
-      <tbody>
-    </table>
+<div class="w-full">
+  <% if notice.present? %>
+  <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <div class="flex justify-between items-center" turbo_frame_tag="new_plant">
+    <h1 class="font-bold text-4xl">Plants</h1>
+    <%= link_to 'New plant', new_plant_path,
+                            class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium",
+                            data: { turbo_frame: dom_id(@plant)} %>
+  </div>
+  <!-- new plant -->
+  <%= turbo_frame_tag @plant %>
+  <!-- Plants -->
+  <div class="mt-10">
+    <div class="table border-collapse table-auto w-full text-sm">
+      <div class="table-header-group">
+        <div class="table-row">
+          <div class="table-cell border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 dark:text-slate-400 text-left">Name</div>
+          <div class="table-cell border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 dark:text-slate-400 text-left">Pharmacopoeia</div>
+          <div class="table-cell border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 dark:text-slate-400 text-left">Family</div>
+          <div class="table-cell border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3  dark:text-slate-400 text-left">Actions</div>
+        </div>
+      </div>
+      <turbo-frame id="plants" class="table-row-group">
+          <!-- plant / partial -->
+            <%= render @plants %>
+      </div>
+    </div>
   </div>

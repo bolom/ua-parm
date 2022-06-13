@@ -16,12 +16,13 @@
  <div class="mb-5">
        <%= form.collection_check_boxes :name_ids, Name.all, :id, :label %>
  </div>
+ <!--
  <div class="mb-5">
   <%= form.fields_for :names, citation.names.build do |names_fields| %>
   <%= names_fields.text_field :label, placeholder: "label" %>
   <%= names_fields.text_field :category, placeholder: "category" %>
   <% end %>
-
+-->
 
   <div class="mb-5">
     <%= form.text_field :pratique, required: true, placeholder: "pratique", class: "inline-block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96" %>

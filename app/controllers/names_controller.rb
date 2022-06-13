@@ -6,9 +6,11 @@ class NamesController < ApplicationController
 
   def create
     @name = Name.new(name_params)
+    @plant = Plant.find(params[:plant_id])
     respond_to do |format|
       if @name.save
         format.html { redirect_to names_url, notice: "Name was successfully created" }
+        format.turbo_stream
       else
         format.html { render :new, status: :unprocessable_entity }
       end
@@ -16,11 +18,20 @@ class NamesController < ApplicationController
   end
 
   def destroy
+    @plant = Plant.find(params[:plant_id])
     @name = Name.find(params[:id])
     @name.destroy
-    redirect_to names_url, notice: "name was successfully deleted."
+    respond_to do |format|
+     format.html { redirect_to names_url, notice: "Name was successfully deleted." }
+     format.turbo_stream
+   end
   end
 
+  def show
+    @plant = Plant.find(params[:plant_id])
+    @name = Name.find(params[:id])
+  end
+  
   def edit
     @name = Name.find(params[:id])
   end

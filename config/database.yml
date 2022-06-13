@@ -4,3 +4,9 @@ development:
   database: ua-parm
   username: <%= Rails.application.credentials.dig(:postgres_username)%>
   password: <%= Rails.application.credentials.dig(:postgres_password)%>
+
+
+test:
+  adapter: sqlite3
+  encoding: unicode
+  database: ua-parm-test

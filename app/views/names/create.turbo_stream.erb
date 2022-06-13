@@ -1,0 +1,7 @@
+<% if @name.category == "synonym" %>
+  <%= turbo_stream.update  "name-#{@name.category}", "" %>
+<% end %>
+
+<%= turbo_stream.prepend "name-#{@name.category}" do %>
+  <%= render partial: "names/name", locals: { name: @name, plant: @plant} %>
+<% end %>

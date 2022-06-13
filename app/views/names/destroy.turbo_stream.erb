@@ -1,0 +1,7 @@
+<%= turbo_stream.remove "name-#{@name.id}" %>
+
+<% if @name.category == "synonym" %>
+  <%= turbo_stream.update "name-synonym" do %>
+    <%= render "names/form-plant", name: Name.new, plant: @plant, category: "synonym" %>
+  <% end %>
+<% end %>

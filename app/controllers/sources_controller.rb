@@ -22,6 +22,10 @@ class SourcesController < ApplicationController
     redirect_to sources_url, notice: "source was successfully deleted."
   end
 
+  def show
+    @source = Source.find(params[:id])
+  end
+
   def edit
     @source = Source.find(params[:id])
   end
