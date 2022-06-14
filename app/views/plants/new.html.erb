@@ -1,7 +1,5 @@
 <div class="w-full">
-  <%= link_to sanitize("&larr; Back to plants"), plants_path %>
-  <h1 class="font-bold text-4xl">New Plants</h1>
   <%= turbo_frame_tag @plant do %>
-    <%= render "form", plant: @plant %>
+    <%= render "form", plant: @plant, name_button: "create a new plant" %>
   <% end %>
 </div>

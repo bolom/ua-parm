@@ -4,6 +4,9 @@ class CitationsController < ApplicationController
     @citation = Citation.new
   end
 
+  def new
+    @citation = Citation.new
+  end
   def destroy
     @citation = Citation.find(params[:id])
     @citation.destroy

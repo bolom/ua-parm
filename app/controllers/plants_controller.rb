@@ -1,7 +1,11 @@
 class PlantsController < ApplicationController
   def index
-    @plants = Plant.ordered
     @plant = Plant.new
+    @plants=   Plant
+      .search(params[:search])
+      .by_pharmacopoeia(params[:pharmacopoeia])
+      .by_family(params[:family])
+      .ordered
   end
 
   def new

@@ -20,6 +20,10 @@ class PeopleController < ApplicationController
     redirect_to people_url, notice: "Person was successfully deleted."
   end
 
+  def show
+    @person = Person.find(params[:id])
+  end
+  
   def edit
     @person = Person.find(params[:id])
   end

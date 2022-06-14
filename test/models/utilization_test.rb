@@ -1,6 +1,6 @@
 require "test_helper"
 
-class NameSourceTest < ActiveSupport::TestCase
+class UtilizationTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

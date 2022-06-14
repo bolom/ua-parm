@@ -5,48 +5,44 @@ class PlantsTest < ApplicationSystemTestCase
     @plant = Plant.ordered.first
   end
 
-  #test "Showing a plant" do
-  #  visit plants_path
-  #  click_link @plant.name
-
-  #  assert_selector "h1", text: @plant.name
-#  end
+  test "Showing a plant" do
+    visit plants_path
+    click_link @plant.scientific
+    assert_selector "h1", text: @plant.scientific
+  end
 
   test "Creating a new plant" do
     visit plants_path
-    assert_selector "h1", text: "Plants"
+    #assert_selector "h1", text: "Plants"
 
     click_on "New plant"
     fill_in :plant_scientific, with: "Capybara plant"
-    select "Amaranthaceae", from: :plant_pharmacopoeia
-    select "none", from: :plant_family
+    select "Tramil", from: :plant_pharmacopoeia
+    select "Zingiberaceae", from: :plant_family
 
-    assert_selector "h1", text: "Plants"
-    click_on "create this plant"
+  #  assert_selector "h1", text: "Plants"
+    click_on "create a new plant"
 
-    assert_selector "h1", text: "Plants"
+  #  assert_selector "h1", text: "Plants"
     assert_text "Capybara plant"
   end
 
-  #test "Updating a plant" do
-  #  visit plants_path
-  #  assert_selector "h1", text: "Plants"
+  test "Updating a plant" do
+    visit plants_path
+    find(:css,'.edit').click
+    fill_in :plant_scientific, with: "Updated plant"
+    click_on "Save change"
+    assert_text "Updated plant"
+  end
 
-  #  click_on "Edit", match: :first
-  #  fill_in "Name", with: "Updated plant"
+  test "Destroying a plant" do
+    visit plants_path
+    assert_text @plant.scientific
 
-  #  assert_selector "h1", text: "Plants"
-  #  click_on "Update plant"
-
-  #  assert_selector "h1", text: "Plants"
-  #  assert_text "Updated plant"
-  #end
-
-#  test "Destroying a plant" do
-#    visit plants_path
-#    assert_text @plant.name
-
-#    click_on "Delete", match: :first
-#    assert_no_text @plant.name
-#  end
+    #click_on "delete", match: :first
+    accept_alert do
+        find(:css,'.delete').click
+    end
+    assert_no_text @plant.scientific
+  end
 end

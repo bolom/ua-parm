@@ -16,4 +16,7 @@ class Name < ApplicationRecord
 #   has_many :name_citations, dependent: :destroy
 #   has_many :citations, -> { distinct }, through: :name_citations
 
+  def full_name
+    "#{label} (#{plant.scientific})"
+  end
 end

@@ -75,3 +75,6 @@ group :test do
   gem "webdrivers"
   gem "sqlite3"
 end
+
+gem "pagy", "~> 5.6"
+gem "pg_search"

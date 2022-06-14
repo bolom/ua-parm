@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_13_213217) do
+ActiveRecord::Schema[7.0].define(version: 2022_06_14_021925) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -30,7 +30,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_13_213217) do
   end
 
   create_table "citations", force: :cascade do |t|
-    t.string "pratique"
     t.string "text"
     t.string "pages"
     t.string "note"
@@ -105,6 +104,12 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_13_213217) do
     t.string "scientific"
   end
 
+  create_table "pratiques", force: :cascade do |t|
+    t.string "label"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "sources", force: :cascade do |t|
     t.string "title"
     t.string "publication_date"
@@ -113,6 +118,21 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_13_213217) do
     t.string "category"
     t.string "origin"
     t.string "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "utilization_citations", force: :cascade do |t|
+    t.bigint "citation_id", null: false
+    t.bigint "pratique_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["citation_id"], name: "index_utilization_citations_on_citation_id"
+    t.index ["pratique_id"], name: "index_utilization_citations_on_pratique_id"
+  end
+
+  create_table "utilizations", force: :cascade do |t|
+    t.string "label"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -129,4 +149,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_13_213217) do
   add_foreign_key "person_sources", "sources"
   add_foreign_key "plant_sources", "plants"
   add_foreign_key "plant_sources", "sources"
+  add_foreign_key "utilization_citations", "citations"
+  add_foreign_key "utilization_citations", "pratiques"
 end
