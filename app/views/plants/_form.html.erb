@@ -1,3 +1,9 @@
+
+<div data-controller="filters" data-filters-url-value="/taxa.json?q=%s" class="mt-5 mb-5">
+  Search by species, genus or family name, or any words describing the plant:
+  <input type="search" data-action="filters#findResults" class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding  border border-solid border-gray-300 rounded transition  ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none">
+</div>
+
 <%= form_with(model: plant, class: "#{dom_id(plant)}_form mt-5 mb-5") do |form| %>
   <% if plant.errors.any? %>
     <div style="color: red">
@@ -12,15 +18,11 @@
   <% end %>
 
   <div class="form-group mb-6">
-    <%= form.text_field :scientific, placeholder: "name (scientific)", class: "form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding  border border-solid border-gray-300 rounded transition  ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" %>
+    <%= form.select :scientific, [],placeholder: "name (scientific)", class: "form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding  border border-solid border-gray-300 rounded transition  ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" %>
   </div>
 
   <div class="form-group mb-6">
     <%= form.select :pharmacopoeia, ["Tramil", "Ayurvédique/Indienne", "none"] , class: "shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96"%>
-  </div>
-
-  <div class="form-group mb-6">
-    <%= form.select :family, ["Euphorbiaceae", "Amaranthaceae", "Asteraceae", "Zingiberaceae"] , class: "shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96"%>
   </div>
 
   <div>

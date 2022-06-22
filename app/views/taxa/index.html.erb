@@ -1,0 +1,9 @@
+
+
+<%= turbo_frame_tag "filters-results" do %>
+<ul>
+  <% @taxa.to_a.each do |r| %>
+    <li><%= r["name"] %></li>
+  <% end %>
+</ul>
+<% end %>

@@ -5,12 +5,12 @@ class Name < ApplicationRecord
 
 
    validates:label, presence: true
-   validates:category, presence: true
+   #validates:category, presence: true
 
-   validates :category, inclusion: { in: %w(synonym common),message: "%{value} is not a valid category" }
+  # validates :category, inclusion: { in: %w(synonym common),message: "%{value} is not a valid category" }
    validates_uniqueness_of :plant_id, scope: :category, conditions: -> { where(category: :synonym) }
 
-   scope :synonym, -> { where(category: "synonym").order(id: :desc) }
+  # scope :synonym, -> { where(category: "synonym").order(id: :desc) }
    scope :commons, -> { where(category: "common").order(id: :desc)}
 
 #   has_many :name_citations, dependent: :destroy

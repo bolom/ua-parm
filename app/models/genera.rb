@@ -1,0 +1,2 @@
+class Genera < ApplicationRecord
+end

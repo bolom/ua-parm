@@ -6,6 +6,7 @@ class Citation < ApplicationRecord
 
   belongs_to :source
   belongs_to :name
+  belongs_to :utilization
 
   has_many :utilization_citations, dependent: :destroy
   has_many :utilizations, -> { distinct }, through: :utilization_citations

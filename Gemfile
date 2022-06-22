@@ -76,5 +76,6 @@ group :test do
   gem "sqlite3"
 end
 
-gem "pagy", "~> 5.6"
+#gem "pagy", "~> 5.6"
 gem "pg_search"
+gem 'taxa',git:  "https://github.com/bolom/taxa.git"

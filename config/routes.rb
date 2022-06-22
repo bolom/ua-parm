@@ -9,5 +9,7 @@ Rails.application.routes.draw do
     resources :citations
     resources :areas
 
+    resources :taxa,  only: [:index]
+
     root "plants#index"
   end
