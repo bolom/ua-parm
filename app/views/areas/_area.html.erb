@@ -1,0 +1,10 @@
+<tr>
+  <td><%= area.name %></td>
+  <td>
+      <%= link_to "Edit", edit_area_path(area),class: "btn bg-gray-100"%>
+      <%= button_to "Delete", area_path(area),
+                      method: :delete,
+                      form: { data: { turbo_confirm: "Are you sure?" } },
+                      class: "btn bg-red-100" %>
+  </td>
+</tr>
