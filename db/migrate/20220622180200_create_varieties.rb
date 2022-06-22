@@ -7,6 +7,12 @@ class CreateVarieties < ActiveRecord::Migration[7.0]
       t.string :nomen_clatural_status
       t.string :locations, array: true
       t.boolean :synonym
+      t.boolean :plantae
+      t.boolean :fungi
+      t.string  :fq_id
+      t.string  :name
+      t.string  :name
+
       t.timestamps
     end
   end
