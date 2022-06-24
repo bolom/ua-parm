@@ -11,11 +11,7 @@ class AddMoreColumnsToFamily < ActiveRecord::Migration[7.0]
     add_column :families, :plantea, :boolean
     add_column :families, :fungi, :boolean
     add_column :families, :fq_id, :string
-    add_column :families, :name, :string
     add_column :families, :reference, :string
-
-
-
 
   end
 end

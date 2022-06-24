@@ -3,8 +3,7 @@ class TaxaController < ApplicationController
     @taxa = {}
     page = 1
     powo_client = Taxa::PlantsOfTheWorldOnline::Client.new
-    r = powo_client.search(params[:q],{'filters'=>['species_f']})
-    total_pages = r["totalPages"]
+    r = powo_client.search("Pimenta",{'per_page' => 500, 'filters'=>['species_f','accepted_names']})
     @taxa = r["results"]
     respond_to do |format|
      format.html

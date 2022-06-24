@@ -10,9 +10,37 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_22_180304) do
+ActiveRecord::Schema[7.0].define(version: 2022_06_24_140604) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
 
   create_table "area_sources", force: :cascade do |t|
     t.bigint "source_id", null: false
@@ -47,11 +75,36 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_22_180304) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "source"
+    t.string "name_published_in_year"
+    t.string "taxon_remarks"
+    t.string "nomenclatural_status"
+    t.string "locations", default: [], array: true
+    t.string "authors", default: [], array: true
+    t.boolean "synonym"
+    t.boolean "plantea"
+    t.boolean "fungi"
+    t.string "fq_id"
+    t.string "reference"
   end
 
-  create_table "generas", force: :cascade do |t|
+  create_table "genera", force: :cascade do |t|
+    t.bigint "family_id"
+    t.string "source"
+    t.integer "name_published_in_year"
+    t.string "taxon_remarks"
+    t.string "nomenclatural_status"
+    t.string "locations", array: true
+    t.string "authors", array: true
+    t.boolean "synonym"
+    t.boolean "plantae"
+    t.boolean "fungi"
+    t.string "fq_id"
+    t.string "name"
+    t.string "reference"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["family_id"], name: "index_genera_on_family_id"
   end
 
   create_table "name_citations", force: :cascade do |t|
@@ -135,8 +188,32 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_22_180304) do
   end
 
   create_table "species", force: :cascade do |t|
+    t.bigint "genus_id"
+    t.string "source"
+    t.integer "name_published_in_year"
+    t.string "taxon_remarks"
+    t.string "nomenclatural_status"
+    t.string "locations", array: true
+    t.string "authors", array: true
+    t.boolean "synonym"
+    t.boolean "plantae"
+    t.boolean "fungi"
+    t.string "fq_id"
+    t.string "name"
+    t.string "reference"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["genus_id"], name: "index_species_on_genus_id"
+  end
+
+  create_table "synonyms", force: :cascade do |t|
+    t.uuid "original_id"
+    t.uuid "copy_id"
+    t.string "rank"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["copy_id"], name: "index_synonyms_on_copy_id"
+    t.index ["original_id"], name: "index_synonyms_on_original_id"
   end
 
   create_table "utilization_citations", force: :cascade do |t|
@@ -155,16 +232,26 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_22_180304) do
   end
 
   create_table "varieties", force: :cascade do |t|
+    t.bigint "species_id"
     t.string "source"
     t.integer "name_published_in_year"
     t.string "taxon_remarks"
-    t.string "nomen_clatural_status"
+    t.string "nomenclatural_status"
     t.string "locations", array: true
+    t.string "authors", array: true
     t.boolean "synonym"
+    t.boolean "plantae"
+    t.boolean "fungi"
+    t.string "fq_id"
+    t.string "name"
+    t.string "reference"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["species_id"], name: "index_varieties_on_species_id"
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "area_sources", "areas"
   add_foreign_key "area_sources", "sources"
   add_foreign_key "citations", "names"

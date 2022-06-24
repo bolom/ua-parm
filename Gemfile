@@ -48,7 +48,7 @@ gem "bootsnap", require: false
 # gem "sassc-rails"
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
-# gem "image_processing", "~> 1.2"
+ gem "image_processing", "~> 1.2"
 
 
 group :development, :test do
@@ -79,3 +79,5 @@ end
 #gem "pagy", "~> 5.6"
 gem "pg_search"
 gem 'taxa',git:  "https://github.com/bolom/taxa.git"
+#gem "taxa", path: "/Users/bolo/Documents/Code/UA/taxa"
+gem "down", "~> 5.0"

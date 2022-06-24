@@ -31,8 +31,7 @@ export default class extends Controller {
     dropdown.innerHTML = ""
      for(var i = 0; i < data.length; i++) {
        var opt = data[i]
-       console.log(opt)
-       dropdown.innerHTML += "<option value=\"" + opt.name + "\">" + opt.name + "</option>"
+       dropdown.innerHTML += "<option value=" + opt['fqId']+ ">" + opt.name + "</option>"
      }
  }
 
