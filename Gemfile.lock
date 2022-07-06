@@ -1,6 +1,5 @@
-GIT
-  remote: https://github.com/bolom/taxa.git
-  revision: e432d3fe91685a1a6e04c398cfc8f3daaa7347ea
+PATH
+  remote: /Users/bolo/Documents/Code/UA/taxa
   specs:
     taxa (0.3.1)
       faraday (~> 1.1)
