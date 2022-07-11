@@ -24,7 +24,6 @@ images.each do |image|
   i = Down.download(image_url)
   s.images.attach(io: i, filename: "image.jpg")
 end
-
 #################
 r = powo_client.lookup(s.fq_id,"descriptions,distribution")
 
@@ -33,8 +32,11 @@ r["classification"].each do |c|
   class_name = c["rank"].downcase.upcase_first
   class_object = Object.const_get(class_name)
   t = class_object.find_or_create_by(fq_id: c['fqId'])
-  t.update(name: c['name'], authors: c['author'])
+  t.update(name: c['name'], authors: c['author'].split)
 end
+
+
+
 
 #Genre
 g = Genus.find_by(name: r["genus"])
@@ -63,3 +65,40 @@ s.update(source: r["source"],
 # Corriger le bug avec authors
 # descriptions
 # synonym
+
+Snonyms": [
+        {
+            "fqId": "urn:lsid:ipni.org:names:599775-1",
+            "name": "Myrtus dioica",
+            "author": "L.",
+            "rank": "SPECIES",
+            "taxonomicStatus": "Homotypic_Synonym"
+        }
+
+r["synonyms"].each do |c|
+  #0 Retrouver le rank du Taxon
+  class_name = c["rank"].downcase.upcase_first #Ex Species species
+  class_object = Object.const_get(class_name)
+  #1. Taxon find_or_create_by
+  t = class_object.find_or_create_by(fq_id: c['fqId'])
+  #2. name, author; taxonomicStatus
+#  t.update(name: c['name'], authors: c['author'].split)
+  p "class_name #{class_name}"
+
+  if class_name == "Species"
+    p "t #{t.id}"
+    t.genus = s.genus
+    t.save!
+  end
+
+  if class_name == "Variety"
+    p "t #{t.id}"
+    t.species = s
+    t.save!
+  end
+
+#    , taxonomic_status: c["taxonomicStatus"])
+#3. Rajoute a liste des synonyme possible.
+#{}"Pimenta dioica"
+  s.synonyms.find_or_create_by(synonymable_copy_id: t.id)
+end
