@@ -13,13 +13,15 @@ export default class extends Controller {
   }
 
   findResults(event) {
-   var url = this.urlValue.replace(/%s/g, encodeURIComponent(event.target.value)) ;
-   console.log(url);
-   fetch(url, {
+    console.log(event.target.value);
+    var url = this.urlValue.replace(/%s/g, encodeURIComponent(event.target.value)) ;
+    console.log(url);
+    fetch(url, {
     method: 'GET',
     }).then(response => response.json())
     .then((data) => {
-       this.refreshDropdownValues(data)
+    //console.log(data)
+    this.refreshDropdownValues(data)
     })
   }
 

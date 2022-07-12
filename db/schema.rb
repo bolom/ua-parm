@@ -64,10 +64,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_24_140604) do
     t.bigint "source_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "plants_id"
     t.bigint "name_id"
     t.index ["name_id"], name: "index_citations_on_name_id"
-    t.index ["plants_id"], name: "index_citations_on_plants_id"
     t.index ["source_id"], name: "index_citations_on_source_id"
   end
 
@@ -169,12 +167,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_24_140604) do
     t.index ["family_id"], name: "index_plants_on_family_id"
   end
 
-  create_table "pratiques", force: :cascade do |t|
-    t.string "label"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "sources", force: :cascade do |t|
     t.string "title"
     t.string "publication_date"
@@ -218,11 +210,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_24_140604) do
 
   create_table "utilization_citations", force: :cascade do |t|
     t.bigint "citation_id", null: false
-    t.bigint "pratique_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["citation_id"], name: "index_utilization_citations_on_citation_id"
-    t.index ["pratique_id"], name: "index_utilization_citations_on_pratique_id"
   end
 
   create_table "utilizations", force: :cascade do |t|
@@ -255,7 +245,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_24_140604) do
   add_foreign_key "area_sources", "areas"
   add_foreign_key "area_sources", "sources"
   add_foreign_key "citations", "names"
-  add_foreign_key "citations", "plants", column: "plants_id"
   add_foreign_key "name_citations", "citations"
   add_foreign_key "name_citations", "names"
   add_foreign_key "name_sources", "names"
@@ -266,5 +255,4 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_24_140604) do
   add_foreign_key "plant_sources", "sources"
   add_foreign_key "plants", "families"
   add_foreign_key "utilization_citations", "citations"
-  add_foreign_key "utilization_citations", "pratiques"
 end
