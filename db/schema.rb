@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_24_140604) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_11_193910) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -199,13 +199,13 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_24_140604) do
   end
 
   create_table "synonyms", force: :cascade do |t|
-    t.uuid "original_id"
-    t.uuid "copy_id"
     t.string "rank"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["copy_id"], name: "index_synonyms_on_copy_id"
-    t.index ["original_id"], name: "index_synonyms_on_original_id"
+    t.bigint "synonymable_id"
+    t.bigint "synonymable_copy_id"
+    t.string "synonymable_type"
+    t.index ["synonymable_id", "synonymable_type"], name: "index_synonyms_on_synonymable_id_and_synonymable_type"
   end
 
   create_table "utilization_citations", force: :cascade do |t|
