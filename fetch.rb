@@ -10,95 +10,110 @@
 #powo_client.lookup
 
 require "down"
-name = "Pimenta dioica" # la plante
-powo_client = Taxa::PlantsOfTheWorldOnline::Client.new
+@powo_client = Taxa::PlantsOfTheWorldOnline::Client.new
 
-r = powo_client.search("genus:#{name.split.first},species:#{name.split.last}" ,{'filters'=>['species_f']})
-r = r["results"][0]
-s = Species.find_or_create_by(fq_id: r['fqId'])
-images = r["images"]
-
-images.each do |image|
-  image_url = "https:#{image["fullsize"]}"
-  p image_url #trace
-  i = Down.download(image_url)
-  s.images.attach(io: i, filename: "image.jpg")
-end
-#################
-r = powo_client.lookup(s.fq_id,"descriptions,distribution")
-
-r["classification"].each do |c|
-  p c["rank"]
-  class_name = c["rank"].downcase.upcase_first
-  class_object = Object.const_get(class_name)
-  t = class_object.find_or_create_by(fq_id: c['fqId'])
-  t.update(name: c['name'], authors: c['author'].split)
-end
+def fetch_data_in_pow(genus, species)
+  p "#{genus}-#{species}"
+  r = @powo_client.search("genus:#{genus},species:#{species}" ,{'filters'=>['species_f']})
+  r = r["results"][0]
+  s = Species.find_or_create_by(fq_id: r['fqId'])
+  g = Genus.find_or_create_by(name: r['genus'])
+  s.genus = g
+  s.save!
 
 
+  images = r["images"]
 
+  images.to_a.each do |image|
+    image_url = "https:#{image["fullsize"]}"
+    i = Down.download(image_url)
+    s.images.attach(io: i, filename: "image.jpg")
+  end
+  #################
+  r = @powo_client.lookup(s.fq_id,"descriptions,distribution")
 
-#Genre
-g = Genus.find_by(name: r["genus"])
-#attache Espace au Genre
-s.genus = g
-s.save!
-
-#attache Famille au Genre
-f = Family.find_by(name: r["family"])
-g.family = f
-g.save!
-
-# Informations Complementaires
-s.update(source: r["source"],
-         name_published_in_year: r["namePublishedInYear"],
-         taxon_remarks: r["taxonRemarks"],
-         locations: r["locations"].to_a,
-         authors: r["source"],
-         synonym: r["synonym"],
-         fungi: r["fungi"],
-         plantae: r["plantae"],
-         name: r["name"],
-         nomenclatural_status: r["nomenclaturalStatus"],
-         reference: r["reference"] )
-
-# Corriger le bug avec authors
-# descriptions
-# synonym
-
-Snonyms": [
-        {
-            "fqId": "urn:lsid:ipni.org:names:599775-1",
-            "name": "Myrtus dioica",
-            "author": "L.",
-            "rank": "SPECIES",
-            "taxonomicStatus": "Homotypic_Synonym"
-        }
-
-r["synonyms"].each do |c|
-  #0 Retrouver le rank du Taxon
-  class_name = c["rank"].downcase.upcase_first #Ex Species species
-  class_object = Object.const_get(class_name)
-  #1. Taxon find_or_create_by
-  t = class_object.find_or_create_by(fq_id: c['fqId'])
-  #2. name, author; taxonomicStatus
-#  t.update(name: c['name'], authors: c['author'].split)
-  p "class_name #{class_name}"
-
-  if class_name == "Species"
-    p "t #{t.id}"
-    t.genus = s.genus
-    t.save!
+  r["classification"].each do |c|
+    p c["rank"]
+    class_name = c["rank"].downcase.upcase_first
+    class_object = Object.const_get(class_name)
+    t = class_object.find_or_create_by(fq_id: c['fqId'])
+    author = c['author'].split
+    t.update(name: c['name'], authors: c['author'].split)
   end
 
-  if class_name == "Variety"
-    p "t #{t.id}"
-    t.species = s
-    t.save!
+  #Genre
+  puts "S = #{s.id}"
+  #g = Genus.find_by(name: r["genus"])
+  #attache Espace au Genre
+
+
+  #attache Famille au Genre
+  f = Family.find_by(name: r["family"])
+  g.family = f
+  g.save!
+
+  # Informations Complementaires
+  s.update(source: r["source"],
+           name_published_in_year: r["namePublishedInYear"],
+           taxon_remarks: r["taxonRemarks"],
+           locations: r["locations"].to_a,
+           authors: r["source"],
+           synonym: r["synonym"],
+           fungi: r["fungi"],
+           plantae: r["plantae"],
+           name: r["name"],
+           nomenclatural_status: r["nomenclaturalStatus"],
+           reference: r["reference"] )
+
+  # Corriger le bug avec authors
+  # descriptions
+  # synonym
+
+
+  r["synonyms"].to_a.each do |c|
+    #0 Retrouver le rank du Taxon
+    class_name = c["rank"].downcase.upcase_first #Ex Species species
+    p "===> Synonyms #{class_name} #{s.id}"
+    if class_name == "Subspecies"
+      class_name = "SubSpecies"
+    end
+    class_object = Object.const_get(class_name)
+    #1. Taxon find_or_create_by
+    t = class_object.find_or_create_by(fq_id: c['fqId'])
+    #2. name, author; taxonomicStatus
+    author = c['author'].split
+    t.update(name: c['name'], authors: author)
+
+    case class_name
+    when class_name == "Species"
+      t.genus = s.genus
+      t.save!
+    when class_name == "Variety"
+      t.species = s
+      t.save!
+    end
+    s.synonyms.find_or_create_by(synonymable_copy_id: t.id)
   end
 
-#    , taxonomic_status: c["taxonomicStatus"])
-#3. Rajoute a liste des synonyme possible.
-#{}"Pimenta dioica"
-  s.synonyms.find_or_create_by(synonymable_copy_id: t.id)
+  #descriptions
+  r["descriptions"].to_a.each do |k,v|
+    s.descriptionables.find_or_create_by(key: k, name: v["source"], from_synonym: v["fromSynonym"], descriptions: v["descriptions"])
+  end
+
+  #distributions
+  r["distribution"].to_a.each do |k,v|
+    s.build_distributionable unless s.distributionable
+    s.distributionable.update!("#{k}": v)
+  end
+end
+
+
+#iterate CSV
+dataTable = CSV.table('/Users/bolo/Documents/Code/UA/ua-parm/plantes.csv')
+
+dataTable[:nom_scientifique].each do |nom|
+  genus = nom.split[0]
+  species = nom.split[1]
+  p "genus #{genus} species #{species}"
+  fetch_data_in_pow(genus, species)
 end

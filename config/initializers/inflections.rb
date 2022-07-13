@@ -15,7 +15,7 @@
 #   inflect.acronym "RESTful"
 # end
 ActiveSupport::Inflector.inflections(:en) do |inflect|
-  inflect.uncountable %w( species )
+  inflect.uncountable %w( species sub_species)
   inflect.irregular "genus", "genera"
 
 end
