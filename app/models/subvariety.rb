@@ -1,0 +1,2 @@
+class Subvariety < ApplicationRecord
+end

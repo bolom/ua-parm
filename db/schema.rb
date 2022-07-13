@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_07_11_193910) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_13_200755) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -69,6 +69,28 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_11_193910) do
     t.index ["source_id"], name: "index_citations_on_source_id"
   end
 
+  create_table "descriptions", force: :cascade do |t|
+    t.string "key"
+    t.string "name"
+    t.boolean "from_synonym"
+    t.jsonb "descriptions", default: "{}", null: false
+    t.bigint "descriptionable_id"
+    t.string "descriptionable_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["descriptions"], name: "index_descriptions_on_descriptions", using: :gin
+  end
+
+  create_table "distributions", force: :cascade do |t|
+    t.jsonb "natives", default: "{}", null: false
+    t.jsonb "introduced", default: "{}", null: false
+    t.jsonb "doubtful", default: "{}", null: false
+    t.bigint "distributionable_id"
+    t.string "distributionable_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "families", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -84,6 +106,25 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_11_193910) do
     t.boolean "fungi"
     t.string "fq_id"
     t.string "reference"
+  end
+
+  create_table "forms", force: :cascade do |t|
+    t.bigint "species_id"
+    t.string "source"
+    t.integer "name_published_in_year"
+    t.string "taxon_remarks"
+    t.string "nomenclatural_status"
+    t.string "locations", array: true
+    t.string "authors", array: true
+    t.boolean "synonym"
+    t.boolean "plantae"
+    t.boolean "fungi"
+    t.string "fq_id"
+    t.string "name"
+    t.string "reference"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["species_id"], name: "index_forms_on_species_id"
   end
 
   create_table "genera", force: :cascade do |t|
@@ -196,6 +237,44 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_11_193910) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["genus_id"], name: "index_species_on_genus_id"
+  end
+
+  create_table "sub_species", force: :cascade do |t|
+    t.bigint "species_id"
+    t.string "source"
+    t.integer "name_published_in_year"
+    t.string "taxon_remarks"
+    t.string "nomenclatural_status"
+    t.string "locations", array: true
+    t.string "authors", array: true
+    t.boolean "synonym"
+    t.boolean "plantae"
+    t.boolean "fungi"
+    t.string "fq_id"
+    t.string "name"
+    t.string "reference"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["species_id"], name: "index_sub_species_on_species_id"
+  end
+
+  create_table "subvarieties", force: :cascade do |t|
+    t.bigint "species_id"
+    t.string "source"
+    t.integer "name_published_in_year"
+    t.string "taxon_remarks"
+    t.string "nomenclatural_status"
+    t.string "locations", array: true
+    t.string "authors", array: true
+    t.boolean "synonym"
+    t.boolean "plantae"
+    t.boolean "fungi"
+    t.string "fq_id"
+    t.string "name"
+    t.string "reference"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["species_id"], name: "index_subvarieties_on_species_id"
   end
 
   create_table "synonyms", force: :cascade do |t|

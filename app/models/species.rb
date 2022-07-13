@@ -5,8 +5,7 @@ class Species < ApplicationRecord
   has_many_attached :images
   has_many :synonyms , as: :synonymable
 
-   def grab_image(url)
-     image = Down.download(url)
-     self.images.attach(io: image, filename: "image.jpg")
-  end
+  has_many :descriptionables , as: :descriptionable, class_name: "Description"
+
+  has_one :distributionable , as: :distributionable, class_name: "Distribution"
 end

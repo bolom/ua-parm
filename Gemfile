@@ -81,3 +81,4 @@ gem "pg_search"
 gem 'taxa',git:  "https://github.com/bolom/taxa.git"
 #gem "taxa", path: "/Users/bolo/Documents/Code/UA/taxa"
 gem "down", "~> 5.0"
+gem 'csv'
