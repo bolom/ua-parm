@@ -109,7 +109,7 @@ end
 
 
 #iterate CSV
-dataTable = CSV.table('/Users/bolo/Documents/Code/UA/ua-parm/plantes.csv')
+dataTable = CSV.table('/Users/cantacuzene/Desktop/DW/AvecBolo/ua-parm/plantes.csv')
 
 dataTable[:nom_scientifique].each do |nom|
   genus = nom.split[0]
