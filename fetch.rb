@@ -12,6 +12,7 @@
 require "down"
 @powo_client = Taxa::PlantsOfTheWorldOnline::Client.new
 
+# recupere les plantes
 def fetch_data_in_pow(genus, species)
   p "#{genus}-#{species}"
   r = @powo_client.search("genus:#{genus},species:#{species}" ,{'filters'=>['species_f']})
@@ -108,57 +109,135 @@ def fetch_data_in_pow(genus, species)
 end
 
 
-#iterate CSV
-dataTable = CSV.table('/Users/bolo/Documents/Code/UA/ua-parm/plantes.csv')
+def fetch_plants_(source, biblio)
+  unless biblio[:plantes_recherches_n_daprs_le_nui_plante].nil?
+    plants = biblio[:plantes_recherches_n_daprs_le_nui_plante]
+    plants = plants.remove! "JPL"
+    plants = plants.remove! "BR"
+    plants = plants.remove! "DR"
+    plants = plants.remove! "/"
 
-dataTable[:nom_scientifique].each do |nom|
+
+    plants.strip! # espace ban
+    plants.gsub! ';',',' # remplace ; ,
+
+    if plants == "1 à 20"
+      source.plants << Plant.find_by(nui_plant: 1)
+      source.plants << Plant.find_by(nui_plant: 2)
+      source.plants << Plant.find_by(nui_plant: 3)
+      source.plants << Plant.find_by(nui_plant: 4)
+      source.plants << Plant.find_by(nui_plant: 5)
+      source.plants << Plant.find_by(nui_plant: 6)
+      source.plants << Plant.find_by(nui_plant: 7)
+      source.plants << Plant.find_by(nui_plant: 8)
+      source.plants << Plant.find_by(nui_plant: 9)
+      source.plants << Plant.find_by(nui_plant: 10)
+      source.plants << Plant.find_by(nui_plant: 11)
+      source.plants << Plant.find_by(nui_plant: 12)
+      source.plants << Plant.find_by(nui_plant: 13)
+      source.plants << Plant.find_by(nui_plant: 14)
+      source.plants << Plant.find_by(nui_plant: 15)
+      source.plants << Plant.find_by(nui_plant: 16)
+      source.plants << Plant.find_by(nui_plant: 17)
+      source.plants << Plant.find_by(nui_plant: 18)
+      source.plants << Plant.find_by(nui_plant: 19)
+      source.plants << Plant.find_by(nui_plant: 20)
+    else
+        plants.split(",").each do |nui_plant|
+          nui_plant = nui_plant.gsub(/ /, "")
+          nui_plant = nui_plant.to_i
+          p = Plant.find_by(nui_plant: nui_plant)
+          source.plants << p
+        end
+    end
+  end
+end
+
+def fetch_areas(source, biblio)
+  unless biblio[:espace_mtq_couvert].nil?
+    a = Area.find_or_create_by(name: biblio[:espace_mtq_couvert]) # Martinique
+    source.areas << a
+  end
+
+  # autres zones
+  zones = biblio[:espace_nom_des_autres_espaces_couverts]
+ # object n'est pas nil
+  unless zones.nil?
+    zones.gsub! ';',',' # remplace ; ,
+    #toutes les zones
+    zones.split(",").each do |zone|
+      a = Area.find_or_create_by(name: zone)
+      source.areas << a
+    end
+
+  end
+end
+
+def fetch_authors(source, authors)
+  unless authors.nil?
+    authors.split(";").each do |author|
+     a = author.split("(")
+     #puts "===== a #{a}"
+     full_name = a[0].split(',')
+     #p "Nom #{full_name[0].strip}"
+     #p "Prenoms #{full_name[1].strip}"
+
+     person = Person.find_or_create_by(last_name: full_name[0].strip.downcase , first_name: full_name[1].strip.downcase)
+
+     source.people << person
+
+     dates = a[1]
+     next if dates.nil? # cas ou il y a pas de date ou ()
+     dates.slice! ')' # supprimer ma )
+     dates = dates.split("-")
+     next if dates.empty? # date avec () mais vide
+     p "date de naissance #{dates[0].strip}"  unless dates[0].nil?
+     p "date de dcd #{dates[1].strip}" unless dates[1].nil?
+
+     person.update(date_birth: dates[0].strip) unless dates[0].nil?
+     person.update(date_dc: dates[1].strip) unless dates[1].nil?
+
+   end
+  end
+end
+
+###########
+### iterate CSV
+####
+
+#sheets plants
+dataTable = CSV.table('/Users/bolo/Documents/Code/UA/ua-parm/plantes.csv'
+dataTable.each do |data|
+  nom = data[:nom_scientifique]
   genus = nom.split[0]
   species = nom.split[1]
-  p "genus #{genus} species #{species}"
+  nui_plantes = data[:nui_plantes]
+  nui_plantes = nui_plantes.remove "nui_pla_000"
+  s = Species.find_by(name: "#{genus} #{species}")
+  nui_plantes = nui_plantes.to_i
+  Plant.find_or_create_by!(nui_plant: nui_plantes.to_i, species_id:s.id )
   fetch_data_in_pow(genus, species)
 end
 
 
-
-##############################################
-
-# Source
-# People ok
-# person_source
-# Plant_Source
-
-#TO DO ajouter date naissance + date de deces dans
-# le model people
-
+#sheets sources
 dataTableBiblio = CSV.table('/Users/bolo/Documents/Code/UA/ua-parm/biblio.csv')
+dataTableBiblio.each do |biblio|
+  source = Source.find_or_create_by(
+    title: biblio[:ouvrage_titre],
+    publication_date: biblio[:ouvrage_date_de_publication],
+    edition_reference: biblio[:ouvrage_ref_ddition],
+    web_link: biblio[:o_consulter_sur_le_web],
+    category: biblio[:ref_type],
+    origin: biblio[:ref_origine],
+    note: biblio[:note]
+  )
 
-dataTableBiblio[:auteur_nom_prnom_dates].each do |biblio|
-  # prenom
-  # nom de Famille
-  # date DCD
-  # date de naissance
-
-  # cherche tous les authors
-   next unless biblio
-   biblio.split(";").each do |author|
-    a = author.split("(")
-    #puts "===== a #{a}"
-    full_name = a[0].split(',')
-    #p "Nom #{full_name[0].strip}"
-    #p "Prenoms #{full_name[1].strip}"
-
-    person = Person.find_or_create_by(last_name: full_name[0].strip.downcase , first_name: full_name[1].strip.downcase)
-
-    dates = a[1]
-    next if dates.nil? # cas ou il y a pas de date ou ()
-    dates.slice! ')' # supprimer ma )
-    dates = dates.split("-")
-    next if dates.empty? # date avec () mais vide
-    p "date de naissance #{dates[0].strip}"  unless dates[0].nil?
-    p "date de dcd #{dates[1].strip}" unless dates[1].nil?
-
-    person.update(date_birth: dates[0].strip) unless dates[0].nil?
-    person.update(date_dc: dates[1].strip) unless dates[1].nil?
-
-  end
+  fetch_areas(source, biblio)
+  # author
+  fetch_authors(source, biblio[:auteur_nom_prnom_dates])
+  # plants
+  fetch_plants_(source, biblio)
 end
+
+#sheets de citations

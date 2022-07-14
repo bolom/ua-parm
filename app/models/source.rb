@@ -10,12 +10,16 @@ class Source < ApplicationRecord
 
   has_many :person_sources, dependent: :destroy
   has_many :people, -> { distinct }, through: :person_sources
+
   accepts_nested_attributes_for :people, reject_if: :all_blank, allow_destroy: true
 
   has_many :area_sources, dependent: :destroy
   has_many :areas, -> { distinct }, through: :area_sources
   accepts_nested_attributes_for :areas, reject_if: :all_blank, allow_destroy: true
 
+
+  has_many :plant_sources, dependent: :destroy
+  has_many :plants, -> { distinct }, through: :plant_sources
 
   scope :ordered, -> { order(id: :desc) }
 

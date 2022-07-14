@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_07_14_123441) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_14_140956) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -209,6 +209,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_14_123441) do
     t.string "scientific"
     t.bigint "family_id"
     t.integer "pharmacopoeia"
+    t.integer "nui_plant"
+    t.integer "species_id"
     t.index ["family_id"], name: "index_plants_on_family_id"
   end
 

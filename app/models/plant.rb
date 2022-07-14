@@ -1,16 +1,18 @@
 class Plant < ApplicationRecord
   include PgSearch::Model
-  belongs_to :family
+  belongs_to :species , class_name: "Species"
 
-  enum :pharmacopoeia, [:tramil, :french, :nothing, :ayurveda]
+  #enum :pharmacopoeia, [:tramil, :french, :nothing, :ayurveda]
 
   #validation
-  validates :scientific, presence: true , uniqueness: true
 
   #validates :pharmacopoeia, presence: true
   has_many :names , dependent: :destroy
   has_many :citations, -> { distinct }, through: :names
   has_many :sources, -> { distinct }, through: :citations
+
+  has_many :plant_sources, dependent: :destroy
+  has_many :sources, -> { distinct }, through: :plant_sources
 
   #accepts_nested_attributes_for :sources
 
