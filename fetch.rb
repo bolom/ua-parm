@@ -117,3 +117,48 @@ dataTable[:nom_scientifique].each do |nom|
   p "genus #{genus} species #{species}"
   fetch_data_in_pow(genus, species)
 end
+
+
+
+##############################################
+
+# Source
+# People ok
+# person_source
+# Plant_Source
+
+#TO DO ajouter date naissance + date de deces dans
+# le model people
+
+dataTableBiblio = CSV.table('/Users/bolo/Documents/Code/UA/ua-parm/biblio.csv')
+
+dataTableBiblio[:auteur_nom_prnom_dates].each do |biblio|
+  # prenom
+  # nom de Famille
+  # date DCD
+  # date de naissance
+
+  # cherche tous les authors
+   next unless biblio
+   biblio.split(";").each do |author|
+    a = author.split("(")
+    #puts "===== a #{a}"
+    full_name = a[0].split(',')
+    #p "Nom #{full_name[0].strip}"
+    #p "Prenoms #{full_name[1].strip}"
+
+    person = Person.find_or_create_by(last_name: full_name[0].strip.downcase , first_name: full_name[1].strip.downcase)
+
+    dates = a[1]
+    next if dates.nil? # cas ou il y a pas de date ou ()
+    dates.slice! ')' # supprimer ma )
+    dates = dates.split("-")
+    next if dates.empty? # date avec () mais vide
+    p "date de naissance #{dates[0].strip}"  unless dates[0].nil?
+    p "date de dcd #{dates[1].strip}" unless dates[1].nil?
+
+    person.update(date_birth: dates[0].strip) unless dates[0].nil?
+    person.update(date_dc: dates[1].strip) unless dates[1].nil?
+
+  end
+end
