@@ -10,51 +10,27 @@
 #powo_client.lookup
 
 require "down"
+require "taxa"
+require "csv"
 @powo_client = Taxa::PlantsOfTheWorldOnline::Client.new
 
-# recupere les plantes
-def fetch_data_in_pow(genus, species)
-  p "#{genus}-#{species}"
-  r = @powo_client.search("genus:#{genus},species:#{species}" ,{'filters'=>['species_f']})
-  r = r["results"][0]
-  s = Species.find_or_create_by(fq_id: r['fqId'])
-  g = Genus.find_or_create_by(name: r['genus'])
-  s.genus = g
-  s.save!
-
-
-  images = r["images"]
-
-  images.to_a.each do |image|
-    image_url = "https:#{image["fullsize"]}"
-    i = Down.download(image_url)
-    s.images.attach(io: i, filename: "image.jpg")
-  end
-  #################
-  r = @powo_client.lookup(s.fq_id,"descriptions,distribution")
-
-  r["classification"].each do |c|
-    p c["rank"]
+def fetch_classification(classification, rank, taxon)
+  p "============> fetch_classification"
+  classification.each do |c|
     class_name = c["rank"].downcase.upcase_first
+    next if class_name == rank
     class_object = Object.const_get(class_name)
-    t = class_object.find_or_create_by(fq_id: c['fqId'])
-    author = c['author'].split
-    t.update(name: c['name'], authors: c['author'].split)
+    p "class_name #{class_name}"
+    t = class_object.find_or_create_by(name: c['name'])
+    t.fq_id = c["fqId"]
+    t.authors = c["author"].split
+    t.save!
   end
+end
 
-  #Genre
-  puts "S = #{s.id}"
-  #g = Genus.find_by(name: r["genus"])
-  #attache Espace au Genre
-
-
-  #attache Famille au Genre
-  f = Family.find_by(name: r["family"])
-  g.family = f
-  g.save!
-
-  # Informations Complementaires
-  s.update(source: r["source"],
+def fetch_extra_info(taxon, r)
+  p "============> fetch_extra_info"
+  taxon.update(source: r["source"],
            name_published_in_year: r["namePublishedInYear"],
            taxon_remarks: r["taxonRemarks"],
            locations: r["locations"].to_a,
@@ -65,16 +41,15 @@ def fetch_data_in_pow(genus, species)
            name: r["name"],
            nomenclatural_status: r["nomenclaturalStatus"],
            reference: r["reference"] )
+end
 
-  # Corriger le bug avec authors
-  # descriptions
-  # synonym
+# synonyms
+def fetch_synonyms(synonyms, taxon)
+  p "============> fetch_synonyms"
 
-
-  r["synonyms"].to_a.each do |c|
+  synonyms.to_a.each do |c|
     #0 Retrouver le rank du Taxon
     class_name = c["rank"].downcase.upcase_first #Ex Species species
-    p "===> Synonyms #{class_name} #{s.id}"
     if class_name == "Subspecies"
       class_name = "SubSpecies"
     end
@@ -86,30 +61,106 @@ def fetch_data_in_pow(genus, species)
     t.update(name: c['name'], authors: author)
 
     case class_name
-    when class_name == "Species"
-      t.genus = s.genus
+    when "Species"
+      g = Genus.find_or_create_by(name: c['name'].split[0])
+      t.genus = g
       t.save!
-    when class_name == "Variety"
-      t.species = s
+    when "Variety"
+      t.species = taxon
       t.save!
     end
-    s.synonyms.find_or_create_by(synonymable_copy_id: t.id)
-  end
-
-  #descriptions
-  r["descriptions"].to_a.each do |k,v|
-    s.descriptionables.find_or_create_by(key: k, name: v["source"], from_synonym: v["fromSynonym"], descriptions: v["descriptions"])
-  end
-
-  #distributions
-  r["distribution"].to_a.each do |k,v|
-    s.build_distributionable unless s.distributionable
-    s.distributionable.update!("#{k}": v)
+    taxon.synonyms.find_or_create_by(synonymable_copy_id: t.id)
   end
 end
 
+def fetch_descriptions(descriptions, taxon)
+  descriptions.to_a.each do |k,v|
+    taxon.descriptionables.find_or_create_by(key: k, name: v["source"], from_synonym: v["fromSynonym"], descriptions: v["descriptions"])
+  end
+end
 
-def fetch_plants_(source, biblio)
+def fetch_ddistribution(distribution, taxon)
+  distribution.to_a.each do |k,v|
+    taxon.build_distributionable unless s.distributionable
+    taxon.distributionable.update!("#{k}": v)
+  end
+end
+
+# recupere les plantes
+def fetch_data_species(genus, species)
+  p "#{genus}-#{species}"
+  r = @powo_client.search("genus:#{genus},species:#{species}" ,{'filters'=>['species_f']})
+  r = r["results"][0]
+  #create basic relation
+  s = Species.find_or_create_by(fq_id: r['fqId'], name: r['name'])
+  g = Genus.find_or_create_by(name: r['name'].split[0])
+  f = Family.find_or_create_by(name: r['family'])
+  s.update!(genus: g)
+  g.update!(family: f)
+
+  ######
+  ## get images
+  ####
+  images = r["images"]
+  images.to_a.each do |image|
+    image_url = "https:#{image["fullsize"]}"
+    i = Down.download(image_url)
+    s.images.attach(io: i, filename: "image.jpg")
+  end
+
+  r = @powo_client.lookup(s.fq_id,"descriptions,distribution")
+
+  ######
+  ## get classifactions
+  ####
+  fetch_classification(r["classification"], "species", species)
+
+  ######
+  ## get extra information
+  ####
+  fetch_extra_info(s,r)
+
+  ######
+  ## get extra synonyms
+  ####
+  fetch_synonyms(r["synonyms"], s)
+
+  ######
+  ## get extra descriptions
+  ####
+
+  fetch_descriptions(r["descriptions"], s)
+end
+
+def fetch_data_genus(genus)
+  r = @powo_client.search("genus:#{genus.name}" ,{'filters'=>['genus_f']})
+  r = r["results"][0]
+  genus.update(fq_id: r['fqId'])
+  r = @powo_client.lookup(genus.fq_id,"descriptions,distribution")
+  family = Family.find_or_create_by(name: r["family"])
+  genus.update!(family: family)
+  fetch_classification(r["classification"], "genus", genus)
+  fetch_extra_info(genus, r)
+  fetch_synonyms(r["synonyms"], genus)
+  fetch_descriptions(r["descriptions"], genus)
+end
+
+def fetch_data_family(family)
+  r = @powo_client.search("family:#{family.name}", {'filters'=>['families_f']})
+  r = r["results"][0]
+  family.update(fq_id: r['fqId'])
+  r = @powo_client.lookup(family.fq_id,"descriptions,distribution")
+  p r["classification"]
+  fetch_classification(r["classification"], "family", family)
+  fetch_extra_info(family, r)
+  fetch_synonyms(r["synonyms"], family)
+end
+
+###############################
+##### CSV
+#######
+
+def fetch_plants(source, biblio)
   unless biblio[:plantes_recherches_n_daprs_le_nui_plante].nil?
     plants = biblio[:plantes_recherches_n_daprs_le_nui_plante]
     plants = plants.remove! "JPL"
@@ -202,42 +253,10 @@ def fetch_authors(source, authors)
 end
 
 ###########
-### iterate CSV
+### importa data from CSV
 ####
 
-#sheets plants
-dataTable = CSV.table('/Users/bolo/Documents/Code/UA/ua-parm/plantes.csv'
-dataTable.each do |data|
-  nom = data[:nom_scientifique]
-  genus = nom.split[0]
-  species = nom.split[1]
-  nui_plantes = data[:nui_plantes]
-  nui_plantes = nui_plantes.remove "nui_pla_000"
-  s = Species.find_by(name: "#{genus} #{species}")
-  nui_plantes = nui_plantes.to_i
-  Plant.find_or_create_by!(nui_plant: nui_plantes.to_i, species_id:s.id )
-  fetch_data_in_pow(genus, species)
+
+
+task :import_csv   do
 end
-
-
-#sheets sources
-dataTableBiblio = CSV.table('/Users/bolo/Documents/Code/UA/ua-parm/biblio.csv')
-dataTableBiblio.each do |biblio|
-  source = Source.find_or_create_by(
-    title: biblio[:ouvrage_titre],
-    publication_date: biblio[:ouvrage_date_de_publication],
-    edition_reference: biblio[:ouvrage_ref_ddition],
-    web_link: biblio[:o_consulter_sur_le_web],
-    category: biblio[:ref_type],
-    origin: biblio[:ref_origine],
-    note: biblio[:note]
-  )
-
-  fetch_areas(source, biblio)
-  # author
-  fetch_authors(source, biblio[:auteur_nom_prnom_dates])
-  # plants
-  fetch_plants_(source, biblio)
-end
-
-#sheets de citations

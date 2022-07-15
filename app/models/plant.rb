@@ -2,7 +2,7 @@ class Plant < ApplicationRecord
   include PgSearch::Model
   belongs_to :species , class_name: "Species"
 
-  #enum :pharmacopoeia, [:tramil, :french, :nothing, :ayurveda]
+  enum :pharmacopoeia, [:tramil, :french, :nothing, :ayurveda]
 
   #validation
 
@@ -23,6 +23,5 @@ class Plant < ApplicationRecord
 
   scope :ordered, -> { order(id: :desc) }
   scope :by_pharmacopoeia, -> (value) { send(value) if value.in?(pharmacopoeia.keys) }
-  scope :by_family, ->(value) { where("family_id = ? ", value) if value.present? }
   scope :search, ->(value) { search_by_scientific(value) if value.present? }
 end

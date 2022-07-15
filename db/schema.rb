@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_07_14_140956) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_15_161515) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -104,7 +104,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_14_140956) do
     t.string "locations", default: [], array: true
     t.string "authors", default: [], array: true
     t.boolean "synonym"
-    t.boolean "plantea"
+    t.boolean "plantae"
     t.boolean "fungi"
     t.string "fq_id"
     t.string "reference"
@@ -126,6 +126,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_14_140956) do
     t.string "reference"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "infraspecies"
     t.index ["species_id"], name: "index_forms_on_species_id"
   end
 
@@ -206,12 +207,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_14_140956) do
   create_table "plants", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "scientific"
-    t.bigint "family_id"
     t.integer "pharmacopoeia"
     t.integer "nui_plant"
     t.integer "species_id"
-    t.index ["family_id"], name: "index_plants_on_family_id"
   end
 
   create_table "pratiques", force: :cascade do |t|
@@ -286,6 +284,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_14_140956) do
     t.string "reference"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "infraspecies"
     t.index ["species_id"], name: "index_subvarieties_on_species_id"
   end
 
@@ -297,6 +296,23 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_14_140956) do
     t.bigint "synonymable_copy_id"
     t.string "synonymable_type"
     t.index ["synonymable_id", "synonymable_type"], name: "index_synonyms_on_synonymable_id_and_synonymable_type"
+  end
+
+  create_table "un_rankeds", force: :cascade do |t|
+    t.string "source"
+    t.integer "name_published_in_year"
+    t.string "taxon_remarks"
+    t.string "nomenclatural_status"
+    t.string "locations", array: true
+    t.string "authors", array: true
+    t.boolean "synonym"
+    t.boolean "plantae"
+    t.boolean "fungi"
+    t.string "fq_id"
+    t.string "name"
+    t.string "reference"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "utilization_citations", force: :cascade do |t|
@@ -330,6 +346,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_14_140956) do
     t.string "reference"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "infraspecies"
     t.index ["species_id"], name: "index_varieties_on_species_id"
   end
 
@@ -347,7 +364,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_14_140956) do
   add_foreign_key "person_sources", "sources"
   add_foreign_key "plant_sources", "plants"
   add_foreign_key "plant_sources", "sources"
-  add_foreign_key "plants", "families"
   add_foreign_key "utilization_citations", "citations"
   add_foreign_key "utilization_citations", "pratiques"
 end
