@@ -4,8 +4,8 @@ require "csv"
 @powo_client = Taxa::PlantsOfTheWorldOnline::Client.new
 
 
-task import_pharmacope_csv: [:environment] do
-  dataTable = CSV.table('/Users/bolo/Documents/Code/UA/ua-parm/plantes.csv')
+task import_plants_csv: [:environment] do
+  dataTable = CSV.table("#{Rails.root}/lib/tasks/plantes.csv")
   dataTable.each do |data|
     nom = data[:nom_scientifique]
     genus = nom.split[0]
@@ -13,9 +13,12 @@ task import_pharmacope_csv: [:environment] do
     nui_plantes = data[:nui_plantes]
     nui_plantes = nui_plantes.remove "nui_pla_000"
     nui_plantes = nui_plantes.to_i
+    fetch_data_species(genus, species)
 
     s = Species.find_by(name: "#{genus} #{species}")
-    p =   Plant.find_or_create_by(nui_plant: nui_plantes.to_i)
+    g = s.genus
+    f = g.family
+    p = Plant.find_or_create_by(nui_plant: nui_plantes.to_i)
     pharmacope = data[:pharmacope]
     case pharmacope
     when "Ayurvédique/Indienne"
@@ -26,29 +29,30 @@ task import_pharmacope_csv: [:environment] do
       pharmacope = "nothing"
     end
     pharmacope = pharmacope.downcase.to_sym
-    p.update!(species: s, pharmacopoeia: pharmacope)
+    p.update!(pharmacopoeia: pharmacope, genus: g, species: s, family: f)
+
+  #nom vernaculaires
+
+  nom_vernaculaires = data[:nom_vernaculaire]
+  nom_vernaculaires = nom_vernaculaires.split(",")
+  nom_vernaculaires.each do |nom_vernaculaire|
+    p.names.find_or_create_by(label: nom_vernaculaire )
+  end
   end
 end
 
-task import_csv: [:environment] do
-  dataTable = CSV.table('/Users/bolo/Documents/Code/UA/ua-parm/plantes.csv')
-  dataTable.each do |data|
-    nom = data[:nom_scientifique]
-    genus = nom.split[0]
-    species = nom.split[1]
-    nui_plantes = data[:nui_plantes]
-    nui_plantes = nui_plantes.remove "nui_pla_000"
-    nui_plantes = nui_plantes.to_i
 
+# Ajouter attribut pratique dans le model citation
+#rails g migration AddPratiqueCitation ( string)
+# Ajouter attribut nui_source dans le model Source
+#rails g migration AddNuiSourceCitation ( string)
 
-    #fetch_data_species(genus, species)
-    # add link with Plant
-    s = Species.find_by(name: "#{genus} #{species}")
-    Plant.find_or_create_by!(nui_plant: nui_plantes.to_i, species_id:s.id )
-  end
-
-  dataTableBiblio = CSV.table('/Users/bolo/Documents/Code/UA/ua-parm/b&@  blio.csv') # QUESTION: QLMÙ^PO"É& @A!ÇÀ)-
-  dataTableBiblio.each do |biblio|
+# rake import_plants_csv # plantes csv
+# rake import_biblio_csv # sources csv
+ # rake import_biblio_csv # sources csv
+task import_biblio_csv: [:environment] do
+  dataTable = CSV.table("#{Rails.root}/lib/tasks/biblio.csv")
+    dataTableBiblio.each do |biblio|
     source = Source.find_or_create_by(
       title: biblio[:ouvrage_titre],
       publication_date: biblio[:ouvrage_date_de_publication],
@@ -56,7 +60,9 @@ task import_csv: [:environment] do
       web_link: biblio[:o_consulter_sur_le_web],
       category: biblio[:ref_type],
       origin: biblio[:ref_origine],
-      note: biblio[:note]
+      note: biblio[:note],
+      nui_source: biblio[:nui_source]
+
     )
 
     fetch_areas(source, biblio)
@@ -65,14 +71,44 @@ task import_csv: [:environment] do
     # plants
     fetch_plants(source, biblio)
   end
-
-
 end
 
+
+# Ajouter attribut pratique dans le model citation
+# Ajouter attribut nui_source dans le model Source
+
+task import_sources_csv: [:environment] do
+  puts "import_sources_csv"
+  dataTable = CSV.table("#{Rails.root}/lib/tasks/citations.csv")
+  puts dataTable
+  dataTableBiblio.each do |biblio|
+    # retrouver plant
+    nui_plant = dataTable[:nui_plant] #nui_pla_00048
+    plant = Plant.find_by(nui_plant: nui_pla_00048)
+    # retrouver la Source
+    nui_source = dataTable[:nui_source] #nui_sou_00001
+    source = Source.find_by(nui_source: nui_source)
+    # TO DO create la colums pratique
+    # TO DO  diviser les citations dans la commun D \n
+
+    citation = source.citations.find_or_create_by(pratique: dataTable[:pratique], text: dataTable[:pratique], page:  dataTable[:page], note:  dataTable[:page])
+    citation.update(plant: plant)
+    # creer les noms vernaculaires et lier a la plantes
+    names = dataTable[:nom_utiliser_la_source]
+    names.split(",").each do |name|
+      n = Name.find_or_create_by(label: name)
+      plant.names << n  # plants
+      citation.names << n # sources
+    end
+    # create la  citation
+ end
+end
+
+####
 task fill_up_missing_info_genera: [:environment] do
   Genus.all.each do |genus|
-    fetch_data_genus(genus)
-  end
+    fetch_data_genus( genus )
+ end
 end
 
 task fill_up_missing_info_families: [:environment] do
@@ -82,11 +118,12 @@ task fill_up_missing_info_families: [:environment] do
 end
 
 task fill_up_missing_info_species: [:environment] do
-  Species.where(source: nil).each do |species|
+  #Species.where(source: nil).each do |species|
+  species = Species.find(3030)
     genus = species.name.split[0]
     species = species.name.split[1]
     fetch_data_species(genus, species)
-  end
+#  end
 end
 
 task fill_up_missing_info_sub_species: [:environment] do
@@ -142,6 +179,8 @@ task fill_up_missing_info_form: [:environment] do
   end
 end
 
+
+
 ####################
 def fetch_classification(classification, rank, taxon)
   p "============> fetch_classification"
@@ -170,7 +209,7 @@ def fetch_extra_info(taxon, r)
            name_published_in_year: r["namePublishedInYear"],
            taxon_remarks: r["taxonRemarks"],
            locations: r["locations"].to_a,
-           authors: r["source"],
+           authors: r["authors"].split,
            synonym: r["synonym"],
            fungi: r["fungi"],
            plantae: r["plantae"],
@@ -207,7 +246,9 @@ def fetch_synonyms(synonyms, taxon)
       t.species = taxon
       t.save!
     end
-    taxon.synonyms.find_or_create_by(synonymable_copy_id: t.id)
+
+    p " #{class_name} Taxon #{t.id}"
+    taxon.synonyms.find_or_create_by(synonymable_copy_id: t.id, synonymable_copy_type: class_name )
   end
 end
 
@@ -217,9 +258,9 @@ def fetch_descriptions(descriptions, taxon)
   end
 end
 
-def fetch_ddistribution(distribution, taxon)
+def fetch_distribution(distribution, taxon)
   distribution.to_a.each do |k,v|
-    taxon.build_distributionable unless s.distributionable
+    taxon.build_distributionable unless taxon.distributionable
     taxon.distributionable.update!("#{k}": v)
   end
 end
@@ -268,12 +309,15 @@ def fetch_data_species(genus, species)
   ####
 
   fetch_descriptions(r["descriptions"], s)
+
+  ######
+  ## get extra distribution
+  ####
+  fetch_distribution(r["distribution"], s)
 end
 
 def fetch_data_genus(genus)
-  p "fetch_data_genus #{genus.name}"
   r = @powo_client.search("genus:#{genus.name}" ,{'filters'=>['genus_f']})
-  p r
   return if  r["results"].nil?
   r = r["results"][0]
   genus.update!(fq_id: r['fqId'])

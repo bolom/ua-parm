@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_07_15_161515) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_18_011832) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -158,6 +158,15 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_15_161515) do
     t.index ["name_id"], name: "index_name_citations_on_name_id"
   end
 
+  create_table "name_plants", force: :cascade do |t|
+    t.bigint "plant_id"
+    t.bigint "name_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name_id"], name: "index_name_plants_on_name_id"
+    t.index ["plant_id"], name: "index_name_plants_on_plant_id"
+  end
+
   create_table "name_sources", force: :cascade do |t|
     t.bigint "source_id", null: false
     t.bigint "name_id", null: false
@@ -169,11 +178,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_15_161515) do
 
   create_table "names", force: :cascade do |t|
     t.string "label"
-    t.string "category"
-    t.bigint "plant_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["plant_id"], name: "index_names_on_plant_id"
   end
 
   create_table "people", force: :cascade do |t|
@@ -210,6 +216,10 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_15_161515) do
     t.integer "pharmacopoeia"
     t.integer "nui_plant"
     t.integer "species_id"
+    t.integer "genus_id"
+    t.integer "family_id"
+    t.index ["family_id"], name: "index_plants_on_family_id"
+    t.index ["genus_id"], name: "index_plants_on_genus_id"
   end
 
   create_table "pratiques", force: :cascade do |t|
@@ -295,6 +305,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_15_161515) do
     t.bigint "synonymable_id"
     t.bigint "synonymable_copy_id"
     t.string "synonymable_type"
+    t.string "synonymable_copy_type"
     t.index ["synonymable_id", "synonymable_type"], name: "index_synonyms_on_synonymable_id_and_synonymable_type"
   end
 

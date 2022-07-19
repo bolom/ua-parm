@@ -6,6 +6,7 @@ class Genus < ApplicationRecord
   has_one :distributionable , as: :distributionable, class_name: "Distribution"
 
   has_many :plants , dependent: :destroy
-
+  
+  scope :with_plants, -> { joins(:plants).uniq }
   validates :name, presence: true
 end
