@@ -162,3 +162,46 @@ dataTableBiblio[:auteur_nom_prnom_dates].each do |biblio|
 
   end
 end
+
+dataTableBiblio[:title_publication_date_edition_reference_web_link_category_origine_note].each do |biblio|
+#titre
+#date de publication
+#l'édition
+#les web link
+#catégories
+#origines
+#notes
+
+ next unless biblio
+ biblio.each do |title|
+
+
+   Source = Source.find_or_create_by(title: )
+
+dataTableCitation = CSV.table('/Users/cantacuzene/Desktop/DW/AvecBolo/ua-parm/citation.csv')
+
+  dataTableCitation[:noms_utiliss_dans_la_source].each do |citation|
+#nom utilisé dans la source: Nom1, Nom2 - commence par une majuscule
+
+#chercher tous les noms utilisés
+  citation.split(",").each do |name|
+    a= name.split (",")
+    all_name= a[0].split(',')
+    p "Nom #{all_name[0].strip}"
+
+#name = Citation.create(name:all_name[0].strip)
+  end
+
+end
+
+dataTableCitation[:types_de_pratique].each do |citation|
+#pratique : médicinale, culturel, alimentaire, autre
+
+#chercher toutes les pratiques
+citation.split(",").each do |pratique|
+  a= pratique.split (",")
+  all_pratique= a[0].split(',')
+  p "Pratique #{all_pratique[0].strip}"
+end
+
+end
