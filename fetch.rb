@@ -195,7 +195,7 @@ dataTableCitation = CSV.table('/Users/cantacuzene/Desktop/DW/AvecBolo/ua-parm/ci
 end
 
 dataTableCitation[:types_de_pratique].each do |citation|
-#pratique : médicinale, culturel, alimentaire, autre
+#pratique : médicinale, culturel, alimentaire, autre 
 
 #chercher toutes les pratiques
 citation.split(",").each do |pratique|

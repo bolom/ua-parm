@@ -5,7 +5,9 @@
 
 
 @layer components {
-
+  p {
+    @apply m-2;
+  }
 }
 
 

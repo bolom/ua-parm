@@ -1,87 +1,116 @@
-<div class="class=" w-full">
-  <h1 class="text-4xl text-gray-900 mt-6">
-    <%= @plant.scientific %>
-  </h1>
+<!--
+<div data-controller="geochart">
+		 <div class="map" data-geochart-target="geochart" style="width: 100%; height: 100%;" data-introduced="<%= @introduced.join(",") %>" data-natives="<%= @natives.join(",") %>"></div>
 </div>
+<div id="geochart-colors" style="width: 100%; height: 100%;"></div>
+-->
 
-<div class="border-t border-gray-200 mt-6">
-  <dl>
-    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-      <dt class="text-sm font-medium text-gray-500">
-        family
-      </dt>
-      <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-        <%= @plant.family %>
-      </dd>
-    </div>
-  </dl>
-  <dl>
-    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+<h1 class="text-4xl text-gray-900 mt-6">
+  <em><%= @plant.species.name %></em> <small><%= @plant.species.authors.join(' ') %></small>
+</h1>
+<div class="border-t border-gray-200 bg-gray-50 p-2 flex">
+  <div class="flex-none w-200">
+    <dl>
+      <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+        <dt class="text-sm font-medium text-gray-500">
+          family
+        </dt>
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+          <%= link_to family_path(@plant.family),
+                data: { turbo_frame: "_top" }  do %>
+                <em><%= @plant.family.name %></em>   <%= @plant.family.authors.join(' ') %>
+          <% end %>
+        </dd>
+        <!-- Genus -->
+        <dt class="text-sm font-medium text-gray-500">
+          Genus
+        </dt>
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+          <%= link_to genus_path(@plant.genus),
+                data: { turbo_frame: "_top" }  do %>
+                <em><%= @plant.genus.name %></em> <%= @plant.genus.authors.join(' ') %>
+          <% end %>
+        </dd>
       <dt class="text-sm font-medium text-gray-500">
         Pharmacopoeia
       </dt>
       <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
         <%= @plant.pharmacopoeia %>
       </dd>
-    </div>
-  </dl>
-  <dl>
-    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-      <dt class="text-gray-500">
-        Synonym
-      </dt>
-      <dd class="mt-1 text-gray-900 sm:mt-0 sm:col-span-2">
-        <ul class="mt-3 ml-3">
-          <%= turbo_frame_tag "name-synonym" do %>
-              <!-- add a nes synonym name -->
-              <% if @synonym.new_record? %>
-                  <%= render "names/form-plant", name: Name.new, plant: @plant, category: "synonym" %>
-              <% else %>
-                  <%= turbo_frame_tag "name-#{@synonym.id}" do %>
-                    <%= render partial: "names/name", locals: { plant: @plant, name: @synonym}%>
-                  <% end %>
-              <% end %>
-            <% end %>
-        </ul>
-      </dd>
-    </div>
-  </dl>
-  <dl>
-    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-      <dt class="text-gray-500">
-        Common names
-      </dt>
-      <dd class="mt-1 text-gray-900 sm:mt-0 sm:col-span-2">
-            <%= render "names/form-plant", name: Name.new, plant: @plant, category: "common" %>
-            <ul class="mt-3 ml-3">
-              <%= turbo_frame_tag "name-common" do %>
-                <% @commons.each do |common| %>
-                  <%= render partial: "names/name", locals: { plant: @plant, name: common}%>
-                <% end %>
-              <% end %>
-            </ul>
-      </dd>
-    </div>
-  </dl>
-  <dl>
-    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
       <dt class="text-sm font-medium text-gray-500">
-        Sources
+        Vernaculaire
       </dt>
       <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-          <ul class="mt-3 ml-3">
-            <% @plant.sources.each do |source| %>
-              <li class="text-base ">
-                <%= source.title %>
-                <small class="text-gray-500">
-                   (<% source.people.each do |person| %>
-                    <%= person.full_name %>
-                  <%end%>)
-                </small>
-              </li>
-            <% end %>
-          <ul>
+        <% @plant.names.each do |name| %>
+        <%= link_to  name.label, name_path(name),
+              data: { turbo_frame: "_top" }   %>
+        <% end %>
       </dd>
     </div>
   </dl>
+  </div>
+  <div class="flex-initial">
+    <%= image_tag @plant.species.images.first, class: "object-contain h-fit" %>
+  </div>
 </div>
+<div class="p2">
+  <h2 class="text-2xl text-gray-900 mt-6 mb-2">Synonyms</h2>
+  <ul class="grid grid-cols-2 gap-2">
+    <% @plant.species.synonyms.each do |synonym| %>
+        <li>
+          <%= link_to send("#{synonym.synonymable_copy_type.downcase}_path",synonym.copy ),
+                data: { turbo_frame: "_top" }  do %>
+                <em><%= synonym.copy.name %></em> <%= synonym.copy.authors.join(' ') %>
+          <% end %>
+        </li>
+    <% end %>
+  </ul>
+</div>
+
+<!-- Bibliographie -->
+<div class="border-t border-gray-200 bg-gray-50 p2 mt-6">
+  <h2 class="text-2xl text-gray-900 mt-6 mb-2">Bibliographie</h2>
+  <ul class="grid grid-cols-2 gap-2">
+    <% @plant.sources.each do |source| %>
+        <li>
+					<%= link_to source_path(source),
+								data: { turbo_frame: "_top" }  do %>
+								<em><%= source.title %></em> <%= source.authors_full_name %>
+					<% end %>
+        </li>
+    <% end %>
+  </ul>
+</div>
+
+<!-- Descriptions -->
+<div class="border-t border-gray-200 bg-gray-50 p2 mt-6">
+  <h2 class="text-2xl text-gray-900 mt-6 mb-2">According to Knew Species Profiles</h2>
+  <dl class="">
+     <dt><strong>General Description</strong></dt>
+     <dd class="mb-5"><%== @description %></dd>
+     <dt><strong>Species Profile</strong></dt>
+     <dd class="mb-2 .p:mb-2"><%== @ksp["speciesProfile"][0]["description"] %></dd>
+  </dl>
+</div>
+
+
+<div class="p2 mt-6">
+  <h2 class="text-2xl text-gray-900 mt-6 mb-2">Distribution</h2>
+  <dl>
+    <dt class="text-1xl text-gray-900 mt-6 mb-2"><strong>Native to:</strong></dt>
+    <% @plant.species.distributionable.natives.each do |n| %>
+     <%= n["name"]%>
+    <% end %>
+    <dt class="text-1xl text-gray-900 mt-6 mb-2"><strong>Introduced into:</strong></dt>
+    <% @plant.species.distributionable.introduced.each do |n| %>
+     <%= n["name"]%>
+    <% end %>
+  </dl>
+
+</div>
+
+<!-- images
+<% @plant.species.images.each do |image| %>
+<%= image_tag image, class: "object-contain h-fit" , class: "h-48 w-full object-cover md:h-full md:w-48"%>
+<% end %>
+ -->

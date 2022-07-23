@@ -7,6 +7,10 @@
    :id, :name, {include_blank: true }, {data: { action: "filters#submit" } ,
    class: "form-control shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2"} %>
 
+   <%= form.collection_select :genus, Genus.with_plants,
+   :id, :name, {include_blank: true }, {data: { action: "filters#submit" } ,
+   class: "form-control shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2"} %>
+   
    <%= form.select :pharmacopoeia, Plant.pharmacopoeia.keys,
                   { include_blank: true },
                    { data: { action: "filters#submit" } ,

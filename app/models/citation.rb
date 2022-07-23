@@ -1,12 +1,13 @@
 class Citation < ApplicationRecord
-  validates:pratique, presence: true
+  #validates:pratique, presence: true
   validates:text, presence: true
-  validates:pages, presence: true
-  validates:note, presence: true
+  #validates:pages, presence: true
+  #validates:note, presence: true
 
   belongs_to :source
-  belongs_to :name
-  belongs_to :utilization
+  #belongs_to :name, optional: true
+  #belongs_to :utilization
+  belongs_to :plant, optional: true
 
   has_many :utilization_citations, dependent: :destroy
   has_many :utilizations, -> { distinct }, through: :utilization_citations
@@ -17,4 +18,5 @@ class Citation < ApplicationRecord
   has_many :names, -> { distinct }, through: :name_citations
 
   accepts_nested_attributes_for :names, reject_if: :all_blank, allow_destroy: true
+
 end

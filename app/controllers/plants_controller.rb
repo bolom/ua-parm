@@ -5,6 +5,7 @@ class PlantsController < ApplicationController
       .search(params[:search])
       .by_pharmacopoeia(params[:pharmacopoeia])
       .by_family(params[:family])
+      .by_genus(params[:genus])
       .ordered
   end
 
@@ -22,34 +23,25 @@ class PlantsController < ApplicationController
 
   def show
     @plant = Plant.find(params[:id])
-    @synonym = @plant.names.synonym.first
-    @commons = @plant.names.commons
+    @ksp = @plant.species.descriptionables.find_by(key: "KSP").descriptions
+    @description = @ksp["general"][0]["description"]
+    @natives = []
+    @introduced = []
 
-    if @synonym.blank?
-      @synonym = Name.new
-    end
+     @plant.species.distributionable.natives.each do |n|
+       @natives << n["name"]
+     end
+
+     @plant.species.distributionable.introduced.each do |n|
+       @introduced << n["name"]
+     end
   end
 
   def edit
     @plant = Plant.find(params[:id])
   end
 
-  def create
-  ipni =  plant_params[:scientific]
 
-  #ipni = 
-  #fetch images.
-
-  #  @plant = Plant.new(plant_params)
-  #  respond_to do |format|
-  #    if @plant.save
-  #      format.html { redirect_to plants_url, notice: "plant was successfully created" }
-  #      format.turbo_stream
-  #    else
-  #      format.html { render :new, status: :unprocessable_entity }
-  #    end
-  #  end
-  end
 
   def update
     @plant = Plant.find(params[:id])

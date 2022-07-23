@@ -1,7 +1,7 @@
 <turbo-frame id="<%= "plant_#{plant.id}" %>" class="table-row border-b">
 
   <div class="table-cell border-b border-slate-100 dark:border-slate-300 p-4 pl-8">
-      <%= link_to plant.scientific,
+      <%= link_to plant.name,
             plant_path(plant),
             data: { turbo_frame: "_top" } %>
   </div>
@@ -9,7 +9,7 @@
     <%= plant.pharmacopoeia %>
   </div>
   <div class="table-cell border-b border-slate-100 dark:border-slate-300 p-4 pl-8">
-    <%= plant.family %>
+    <%= plant.family.name %>
   </div>
   <div class="table-cell p-4 pl-8 border-b border-slate-100 dark:border-slate-300">
     <div class="inline-flex space-x-1">

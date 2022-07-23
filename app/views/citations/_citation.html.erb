@@ -1,5 +1,5 @@
 <!-- citation.source -->
-<% unless citation.name.nil? %>
+<% unless citation.plant.nil? %>
 <div class="border-t border-gray-200 mt-6">
   <dl>
     <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -7,19 +7,17 @@
         Pratique
       </dt>
       <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-        <%= citation.utilization %>
+        <%= citation.pratique %>
       </dd>
     </div>
   </dl>
   <dl>
     <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
       <dt class="text-sm font-medium text-gray-500">
-        Common name
+        Noms cités
       </dt>
       <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-        <%= link_to citation.name.label,
-                       plant_name_path(citation.name.plant, citation.name) ,
-                       data: { turbo_frame: "_top" } %>
+          <%= citation.names.pluck(:label).join(',') %>
       </dd>
     </div>
   </dl>
@@ -30,8 +28,8 @@
         Scientific name
       </dt>
       <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-      <%= link_to citation.name.plant.scientific,
-                     plant_path(citation.name.plant) ,
+      <%= link_to citation.plant.species.name,
+                     plant_path(citation.plant) ,
                      data: { turbo_frame: "_top" } %>
       </dd>
     </div>

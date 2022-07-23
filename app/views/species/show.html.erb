@@ -1,0 +1,54 @@
+<h1 class="text-4xl text-gray-900 mt-6">
+  <em><%= @species.name %></em> <small><%= @species.authors.join(',') %></small>
+</h1>
+
+<% if @species.synonym == true  %>
+C'est un synonyme: <%= @species.synonymable.name %>
+<% else %>
+Ce n'est pas un synonyme.
+<% end %>
+
+<div class="border-t border-gray-200 bg-gray-50 p-2 flex">
+  <div class="flex-none w-200">
+    <dl>
+      <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+        <dt class="text-sm font-medium text-gray-500">
+          family
+        </dt>
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+          <%= link_to family_path(@species.genus.family),
+                data: { turbo_frame: "_top" }  do %>
+                <em><%= @species.genus.family.name %></em>   <%= @species.genus.family.authors.join(',') %>
+          <% end %>
+        </dd>
+        <!-- Genus -->
+        <dt class="text-sm font-medium text-gray-500">
+          Genus
+        </dt>
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+          <%= link_to genus_path(@species.genus),
+                data: { turbo_frame: "_top" }  do %>
+                <em><%= @species.genus.name %></em> <%= @species.genus.authors.join(',') %>
+          <% end %>
+        </dd>
+    </div>
+  </dl>
+  </div>
+  <div class="flex-initial">
+    <%= image_tag @image, class: "object-contain h-fit" %>
+  </div>
+</div>
+
+<div class="p2">
+  <h2 class="text-2xl text-gray-900 mt-6 mb-2">Synonyms</h2>
+  <ul class="grid grid-cols-2 gap-2">
+    <% @species.synonyms.each do |synonym| %>
+        <li>
+          <%= link_to send("#{synonym.synonymable_copy_type.downcase}_path",synonym.copy ),
+                data: { turbo_frame: "_top" }  do %>
+                <em><%= synonym.copy.name %></em> <%= synonym.copy.authors.join(' ') %>
+          <% end %>
+        </li>
+    <% end %>
+  </ul>
+</div>

@@ -3,7 +3,7 @@ class Synonym < ApplicationRecord
 
 
   def copy
-    class_object = Object.const_get(self.synonymable_type)
+    class_object = Object.const_get(self.synonymable_copy_type)
     class_object.find(self.synonymable_copy_id)
   end
 end
