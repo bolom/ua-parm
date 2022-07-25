@@ -4,7 +4,6 @@ class Plant < ApplicationRecord
   belongs_to :genus , class_name: "Genus", optional: true
   belongs_to :family, optional: true
 
-
   enum :pharmacopoeia, [:tramil, :french, :nothing, :ayurveda]
 
   #validation

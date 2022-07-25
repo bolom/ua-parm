@@ -43,13 +43,14 @@ end
 
 
 # Ajouter attribut pratique dans le model citation
-#rails g migration AddPratiqueCitation ( string)
+# rails g migration AddPratiqueCitation ( string)
 # Ajouter attribut nui_source dans le model Source
-#rails g migration AddNuiSourceCitation ( string)
+# rails g migration AddNuiSourceCitation ( string)
 
 # rake import_plants_csv # plantes csv
 # rake import_biblio_csv # sources csv
- # rake import_biblio_csv # sources csv
+# rake import_citations_csv # citations csv
+
 task import_biblio_csv: [:environment] do
   dataTable = CSV.table("#{Rails.root}/lib/tasks/biblio.csv")
     dataTableBiblio.each do |biblio|
@@ -74,10 +75,7 @@ task import_biblio_csv: [:environment] do
 end
 
 
-# Ajouter attribut pratique dans le model citation
-# Ajouter attribut nui_source dans le model Source
-
-task import_sources_csv: [:environment] do
+task import_citations_csv: [:environment] do
   puts "import_sources_csv"
   dataTable = CSV.table("#{Rails.root}/lib/tasks/citations.csv")
   puts dataTable
