@@ -3,7 +3,9 @@
 </h1>
 
 <% if @species.synonym == true  %>
-C'est un synonyme: <%= @species.synonymable.name %>
+est un synonyme de <%= link_to species_path(@species.synonymable) do %>
+<em><%= @species.synonymable.name %></em>
+<% end %>
 <% else %>
 Ce n'est pas un synonyme.
 <% end %>
@@ -42,7 +44,8 @@ Ce n'est pas un synonyme.
 <div class="p2">
   <h2 class="text-2xl text-gray-900 mt-6 mb-2">Synonyms</h2>
   <ul class="grid grid-cols-2 gap-2">
-    <% @species.synonyms.each do |synonym| %>
+    <% if @species.synonym == false  %>
+      <% @species.synonyms.each do |synonym| %>
         <li>
           <%= link_to send("#{synonym.synonymable_copy_type.downcase}_path",synonym.copy ),
                 data: { turbo_frame: "_top" }  do %>
@@ -50,5 +53,9 @@ Ce n'est pas un synonyme.
           <% end %>
         </li>
     <% end %>
+    <% else %>
+      <em><%= @species.name %></em>n'a pas de synonyme.
+    <% end %>
+
   </ul>
 </div>

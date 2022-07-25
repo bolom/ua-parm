@@ -98,11 +98,11 @@
   <h2 class="text-2xl text-gray-900 mt-6 mb-2">Distribution</h2>
   <dl>
     <dt class="text-1xl text-gray-900 mt-6 mb-2"><strong>Native to:</strong></dt>
-    <% @plant.species.distributionable.natives.each do |n| %>
+    <% @plant.species.distribution.natives.each do |n| %>
      <%= n["name"]%>
     <% end %>
     <dt class="text-1xl text-gray-900 mt-6 mb-2"><strong>Introduced into:</strong></dt>
-    <% @plant.species.distributionable.introduced.each do |n| %>
+    <% @plant.species.distribution.introduced.each do |n| %>
      <%= n["name"]%>
     <% end %>
   </dl>
