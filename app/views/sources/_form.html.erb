@@ -9,7 +9,7 @@
  <div class="form-group mb-6  bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
    <div class="space-x-2">
      <h2>Select Authors</h2>
-      <%= form.collection_check_boxes :person_ids, Person.all, :id, :full_name %>
+      <%= form.select :person_ids, Person.all.collect {|a| [a.full_name, a.id]} ,{ }, {multiple: true, data: { controller: 'select'}} %>
    </div>
    <div class=" mt-6">
      <h2>Create a new author</h2>
@@ -24,7 +24,7 @@
   <% unless Area.all.empty?%>
   <div class="space-x-2">
     <h2>Select areas</h2>
-     <%= form.collection_check_boxes :area_ids, Area.all, :id, :name %>
+    <%= form.select :area_ids, Area.all.collect {|a| [a.name, a.id]} ,{ }, {data: { controller: 'select'}} %>
   </div>
   <% end %>
   <div class="mt-6">

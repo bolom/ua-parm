@@ -5,7 +5,7 @@ Rails.application.routes.draw do
    resources :genus,  only: [:show, :index]
    resources :variety,  only: [:show, :index]
     resources :names,  only: [:show]
-    resources :plants,  only: [:show, :index, :edit]
+    resources :plants,  only: [:show, :index, :edit, :update]
     resources :people
     resources :sources
     resources :citations
