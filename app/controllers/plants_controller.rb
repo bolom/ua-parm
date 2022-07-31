@@ -23,16 +23,16 @@ class PlantsController < ApplicationController
 
   def show
     @plant = Plant.find(params[:id])
-    @ksp = @plant.species.descriptionables.find_by(key: "KSP").descriptions
+    @ksp = @plant.species.descriptions.find_by(key: "KSP").descriptions
     @description = @ksp["general"][0]["description"]
     @natives = []
     @introduced = []
 
-     @plant.species.distributionable.natives.each do |n|
+     @plant.species.distribution.natives.each do |n|
        @natives << n["name"]
      end
 
-     @plant.species.distributionable.introduced.each do |n|
+     @plant.species.distribution.introduced.each do |n|
        @introduced << n["name"]
      end
   end

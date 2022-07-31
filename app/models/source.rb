@@ -21,6 +21,16 @@ class Source < ApplicationRecord
   has_many :plant_sources, dependent: :destroy
   has_many :plants, -> { distinct }, through: :plant_sources
 
+
   scope :ordered, -> { order(id: :desc) }
+
+ def authors_full_name
+   authors = []
+   self.people.pluck(:first_name,:last_name).each do |person|
+     authors << "#{person.first.capitalize} #{person.last.capitalize}"
+   end
+
+   authors.join(',')
+ end
 
 end

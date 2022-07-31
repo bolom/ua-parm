@@ -9,7 +9,7 @@ class Plant < ApplicationRecord
   #validation
 
   #validates :pharmacopoeia, presence: true
-  has_many :citations, -> { distinct }, through: :names
+  has_many :citations, dependent: :destroy
   has_many :sources, -> { distinct }, through: :citations
 
   has_many :plant_sources, dependent: :destroy

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_07_18_011832) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_22_134456) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -66,7 +66,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_18_011832) do
     t.datetime "updated_at", null: false
     t.bigint "plants_id"
     t.bigint "name_id"
+    t.string "pratique"
+    t.string "page"
+    t.bigint "plant_id", null: false
     t.index ["name_id"], name: "index_citations_on_name_id"
+    t.index ["plant_id"], name: "index_citations_on_plant_id"
     t.index ["plants_id"], name: "index_citations_on_plants_id"
     t.index ["source_id"], name: "index_citations_on_source_id"
   end
@@ -167,15 +171,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_18_011832) do
     t.index ["plant_id"], name: "index_name_plants_on_plant_id"
   end
 
-  create_table "name_sources", force: :cascade do |t|
-    t.bigint "source_id", null: false
-    t.bigint "name_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["name_id"], name: "index_name_sources_on_name_id"
-    t.index ["source_id"], name: "index_name_sources_on_source_id"
-  end
-
   create_table "names", force: :cascade do |t|
     t.string "label"
     t.datetime "created_at", null: false
@@ -214,7 +209,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_18_011832) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "pharmacopoeia"
-    t.integer "nui_plant"
+    t.string "nui_plant"
     t.integer "species_id"
     t.integer "genus_id"
     t.integer "family_id"
@@ -238,6 +233,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_18_011832) do
     t.string "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "nui_source"
   end
 
   create_table "species", force: :cascade do |t|
@@ -256,6 +252,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_18_011832) do
     t.string "reference"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "description"
     t.index ["genus_id"], name: "index_species_on_genus_id"
   end
 
@@ -366,11 +363,10 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_18_011832) do
   add_foreign_key "area_sources", "areas"
   add_foreign_key "area_sources", "sources"
   add_foreign_key "citations", "names"
+  add_foreign_key "citations", "plants"
   add_foreign_key "citations", "plants", column: "plants_id"
   add_foreign_key "name_citations", "citations"
   add_foreign_key "name_citations", "names"
-  add_foreign_key "name_sources", "names"
-  add_foreign_key "name_sources", "sources"
   add_foreign_key "person_sources", "people"
   add_foreign_key "person_sources", "sources"
   add_foreign_key "plant_sources", "plants"

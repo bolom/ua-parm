@@ -12,7 +12,20 @@
                             async: true,
                             defer: true,
                             "data-turbolinks-eval": false %>
+
 </head>
+<script type="text/javascript">
+
+
+new TomSelect("#input-tags",{
+	persist: false,
+	createOnBlur: true,
+	create: true
+});
+
+
+</script>
+
 <body>
   <header>
     <nav data-controller="toggle" class="m-6">
