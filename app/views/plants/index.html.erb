@@ -4,10 +4,14 @@
   <% end %>
   <!-- filter -->
   <%= render partial: "filter" %>
+<<<<<<< HEAD
   <!-- new plant
   <%= turbo_frame_tag @plant %>
   -->
     <div class="mt-10">
+=======
+  <div class="mt-10">
+>>>>>>> origin/mc-ux
     <div class="table border-collapse table-auto w-full text-sm">
       <div class="table-header-group">
         <div class="table-row">
@@ -18,7 +22,14 @@
         </div>
       </div>
       <turbo-frame id="plants" class="table-row-group">
+<<<<<<< HEAD
         <%= render @plants %>
       </div>
+=======
+          <!-- plant / partial -->
+            <%= render @plants %>
+
+      </turbo-frame>
+>>>>>>> origin/mc-ux
     </div>
   </div>

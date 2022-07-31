@@ -14,4 +14,6 @@ class Species < ApplicationRecord
     Synonym.find_by(synonymable_copy_id: self.id).synonymable
   end
 
+  has_one :plant
+
 end

@@ -54,6 +54,10 @@
 .ts-wrapper .dropdown-header {
   position: relative;
   padding: 10px 8px;
+<<<<<<< HEAD
+=======
+  border-bottom: 1px solid #d0d0d0;
+>>>>>>> origin/mc-ux
   background: #f8f8f8;
   border-radius: 3px 3px 0 0;
 }

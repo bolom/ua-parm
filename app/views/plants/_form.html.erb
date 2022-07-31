@@ -1,10 +1,4 @@
-
-<div data-controller="filters" data-filters-url-value="/taxa.json?q=%s" class="mt-5 mb-5">
-  Search by species, genus or family name, or any words describing the plant:
-  <input type="search" data-action="filters#findResults" class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding  border border-solid border-gray-300 rounded transition  ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none">
-</div>
-
-<%= form_with(model: plant, class: "#{dom_id(plant)}_form mt-5 mb-5") do |form| %>
+<%= form_with(model: plant, class: "#{dom_id(plant)}_form") do |form| %>
   <% if plant.errors.any? %>
     <div style="color: red">
       <h2><%= pluralize(plant.errors.count, "error") %> prohibited this plant from being saved:</h2>
@@ -17,15 +11,19 @@
     </div>
   <% end %>
 
-  <div class="form-group mb-6">
-    <%= form.select :scientific, [],placeholder: "name (scientific)", class: "form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding  border border-solid border-gray-300 rounded transition  ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" %>
+  <div class="table-cell border-b border-slate-100 dark:border-slate-300 p-4 pl-8">
+      <%= plant.name %>
   </div>
-
-  <div class="form-group mb-6">
-    <%= form.select :pharmacopoeia, ["Tramil", "Ayurvédique/Indienne", "none"] , class: "shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96"%>
+  <div class="table-cell border-b border-slate-100 dark:border-slate-300 p-4 pl-8">
+    <%= form.select :pharmacopoeia, Plant.pharmacopoeia.keys,
+                      {},
+                      {class: "form-control shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 "}%>
   </div>
-
-  <div>
+  <div class="table-cell border-b border-slate-100 dark:border-slate-300 p-4 pl-8">
+    <%= plant.family.name %>
+  </div>
+  <div class="table-cell p-4 pl-8 border-b border-slate-100 dark:border-slate-300">
+    <div class="inline-flex space-x-1">
     <%= form.submit name_button, class: "px-6
       py-2.5
       bg-blue-600
@@ -47,5 +45,5 @@
           capitalize
           rounded
           shadow-md" %>
-  </div>
+
 <% end %>

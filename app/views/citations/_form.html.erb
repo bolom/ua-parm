@@ -14,12 +14,7 @@
   <div class="form-group mb-6  bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
     <div class="2">
       <h2>Select Commun Name</h2>
-      <ul>
-        <%= form.collection_check_boxes :name_ids, Name.all, :id, :full_name do |m| %>
-                  <li><%= m.check_box %> <%= m.label %> </li>
-              <% end %>
-      </ul>
-
+        <%= form.select :citation_ids, Citation.all.collect {|a| [a.source, a.id]} ,{ }, {multiple: true, data: { controller: 'select'}} %>
     </div>
     <div class=" mt-6">
       <h2>Create a new common Nam</h2>

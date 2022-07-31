@@ -3,19 +3,19 @@
 </h1>
 
 <% if @species.synonym == true  %>
-est un synonyme de <%= link_to species_path(@species.synonymable) do %>
-<em><%= @species.synonymable.name %></em>
+  C'est un synonyme de <%= link_to url_plant_or_species(@species.synonymable) do %>
+  <em><%= @species.synonymable.name %></em>
 <% end %>
-<% else %>
-Ce n'est pas un synonyme.
 <% end %>
+
+
 
 <div class="border-t border-gray-200 bg-gray-50 p-2 flex">
   <div class="flex-none w-200">
     <dl>
       <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
         <dt class="text-sm font-medium text-gray-500">
-          family
+          Family
         </dt>
         <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
           <%= link_to family_path(@species.genus.family),
@@ -41,10 +41,10 @@ Ce n'est pas un synonyme.
   </div>
 </div>
 
+<% if @species.synonym == false  %>
 <div class="p2">
   <h2 class="text-2xl text-gray-900 mt-6 mb-2">Synonyms</h2>
   <ul class="grid grid-cols-2 gap-2">
-    <% if @species.synonym == false  %>
       <% @species.synonyms.each do |synonym| %>
         <li>
           <%= link_to send("#{synonym.synonymable_copy_type.downcase}_path",synonym.copy ),
@@ -53,9 +53,6 @@ Ce n'est pas un synonyme.
           <% end %>
         </li>
     <% end %>
-    <% else %>
-      <em><%= @species.name %></em>n'a pas de synonyme.
-    <% end %>
-
   </ul>
 </div>
+<% end %>

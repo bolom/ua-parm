@@ -9,7 +9,11 @@
  <div class="form-group mb-6  bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
    <div class="space-x-2">
      <h2>Select Authors</h2>
+<<<<<<< HEAD
       <%= form.select :person_ids, Person.all.collect {|a| [a.full_name, a.id]} ,{multiple: true}, {data: { controller: 'select',action: 'filters#submit'}} %>
+=======
+      <%= form.select :person_ids, Person.all.collect {|a| [a.full_name, a.id]} ,{ }, {multiple: true, data: { controller: 'select'}} %>
+>>>>>>> origin/mc-ux
    </div>
    <div class=" mt-6">
      <h2>Create a new author</h2>
@@ -24,7 +28,11 @@
   <% unless Area.all.empty?%>
   <div class="space-x-2">
     <h2>Select areas</h2>
+<<<<<<< HEAD
      <%= form.select :area_ids, Area.all.collect {|a| [a.name, a.id]} ,{ include_blank: true }, {data: { controller: 'select',action: 'filters#submit'}} %>
+=======
+    <%= form.select :area_ids, Area.all.collect {|a| [a.name, a.id]} ,{ }, {data: { controller: 'select'}} %>
+>>>>>>> origin/mc-ux
   </div>
   <% end %>
   <div class="mt-6">
