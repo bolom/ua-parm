@@ -1,10 +1,3 @@
-<!--
-<div data-controller="geochart">
-		 <div class="map" data-geochart-target="geochart" style="width: 100%; height: 100%;" data-introduced="<%= @introduced.join(",") %>" data-natives="<%= @natives.join(",") %>"></div>
-</div>
-<div id="geochart-colors" style="width: 100%; height: 100%;"></div>
--->
-
 <h1 class="text-4xl text-gray-900 mt-6">
   <em><%= @plant.species.name %></em> <small><%= @plant.species.authors.join(' ') %></small>
 </h1>
@@ -41,16 +34,26 @@
         Vernaculaire
       </dt>
       <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-        <% @plant.names.each do |name| %>
-        <%= link_to  name.label, name_path(name),
-              data: { turbo_frame: "_top" }   %>
-        <% end %>
+				<ul>
+					<% @plant.names.each do |name| %>
+						<li>
+							<%= link_to  name.label, name_path(name),
+										data: { turbo_frame: "_top" }   %>
+						</li>
+						<% end %>
+				</ul>
       </dd>
     </div>
   </dl>
   </div>
-  <div class="flex-initial">
-    <%= image_tag @plant.species.images.first, class: "object-contain h-fit" %>
+  <div class="flex-initial ">
+		<div class="container grid grid-cols-3 gap-2 mx-auto">
+			<% @plant.species.images.each do |image| %>
+					<div class="w-full rounded">
+						<%= image_tag image, class: "object-contain h-fit" %>
+					</div>
+			<% end %>
+		</div>
   </div>
 </div>
 <div class="p2">
@@ -89,7 +92,7 @@
      <dt><strong>General Description</strong></dt>
      <dd class="mb-5"><%== @description %></dd>
      <dt><strong>Species Profile</strong></dt>
-     <dd class="mb-2 .p:mb-2"><%== @ksp["speciesProfile"][0]["description"] %></dd>
+     <dd class="mb-2 .p:mb-2"><%== @description %></dd>
   </dl>
 </div>
 
@@ -108,9 +111,3 @@
   </dl>
 
 </div>
-
-<!-- images
-<% @plant.species.images.each do |image| %>
-<%= image_tag image, class: "object-contain h-fit" , class: "h-48 w-full object-cover md:h-full md:w-48"%>
-<% end %>
- -->

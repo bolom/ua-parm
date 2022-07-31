@@ -4,15 +4,94 @@
   <% end %>
 
   <div class="flex justify-between items-center" turbo_frame_tag="new_citation">
-    <h1 class="font-bold text-4xl">citations</h1>
     <%= link_to 'New citation', new_citation_path,
-                            class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium",
-                            data: { turbo_frame: dom_id(@citation)} %>
+                            data: { turbo_frame: "_top"},
+                            class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium" %>
   </div>
-  <!-- new citation -->
-  <%= turbo_frame_tag @citation %>
-  <!-- citations -->
-  <%= turbo_frame_tag "citations" do %>
-    <%= render  @citations %>
+  <!-- filter-->
+  <div class="form-group mb-6 inline-flex ">
+     <%= form_with(url: citations_path,
+                  class: "mt-5 mb-5 flex space-x-2 w-full",
+                  method: :get, data: { controller: "filters", filters_target: "form", turbo_frame: "citations" }) do |form| %>
+    <%= form.select :plant, Plant.all.collect {|a| ["#{a.species.name}", a.id]} ,{ include_blank: true }, {class: "w-full",data: { action: 'filters#submit'}} %>
+    <%= form.select :source, Source.all.collect {|a| [a.title, a.id]} ,{ include_blank: true }, {class: "w-full", data: { action: 'filters#submit'}} %>
+    <%= form.select :utilization, Utilization.all.collect {|a| [a.label, a.id]} ,{ include_blank: true }, {class: "w-full",data: { action: 'filters#submit'}} %>
+    <%= form.select :name, Name.all.order(:label).collect {|a| [a.label, a.id]} ,{ include_blank: true }, {class: "w-full",data: { action: 'filters#submit'}} %>
   <% end %>
+</div>
+
+  <!-- citations -->
+  <div class="mt-10">
+    <div class="table border-collapse table-auto w-full text-sm">
+      <div class="table-header-group">
+        <div class="table-row">
+          <div class="table-cell border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 dark:text-slate-400 text-left"> </div>
+          <div class="table-cell border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 dark:text-slate-400 text-left"> </div>
+        </div>
+      </div>
+      <turbo-frame id="citations" class="table-row-group">
+        <% @citations.each do |citation| %>
+        <div class="table-row-group">
+
+          <!-- Citation -->
+          <div class="table-cell border-b border-slate-100 dark:border-slate-300 p-4 pl-8 ">
+          <!-- actions -->
+            <div class="inline-flex space-x-1">
+              <%= link_to citation_path(citation),
+              data: { turbo_frame: "_top" } ,
+              class: "flex-1 show"  do %>
+              <svg xmlns="http://www.w3.org/2000/svg" class="inline h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              <% end %>
+              <%= link_to edit_citation_path(citation), class: "flex-1 edit"  do %>
+              <svg xmlns="http://www.w3.org/2000/svg" class="inline transition duration-500 hover:scale-125  h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+              <% end %>
+              <%= button_to citation_path(citation),
+                              method: :delete,
+                              form: { data: { turbo_confirm: "Are you sure?" } },
+                              class: "flex-1 inline" do %>
+              <svg xmlns="http://www.w3.org/2000/svg" class="transition duration-500 hover:scale-125 hover:bg-red-600 h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              <% end %>
+            </div>
+            <div class="mt-5">
+              <%= link_to citation.text.truncate(300),
+                    citation_path(citation),
+                    data: { urbo_frame: "_top" ,turbo_frame: "_top" } %>
+            </div>
+          </div>
+          <!-- Citation -->
+          <div class="table-cell border-b border-slate-100 dark:border-slate-300 p-4 pl-8">
+            <dl>
+              <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500">Source</dt>
+                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                  <%= link_to citation.source.title,
+                        source_path(citation.source),
+                        data: { turbo_frame: "_top" } %>
+                </dd>
+              </div>
+              <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500">Pratique(s)</dt>
+                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= citation.utilizations.pluck(:label).join(",") %></dd>
+              </div>
+              <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500">Nom(s) cité(s)</dt>
+                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= citation.names.pluck(:label).join(",") %></dd>
+              </div>
+              <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500">Plante</dt>
+                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><strong><em><%= citation.plant.name %></em></strong></dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+          <% end %>
+        </turbo-frame>
+    </div>
   </div>

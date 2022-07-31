@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_07_22_134456) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_31_132421) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -59,20 +59,23 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_22_134456) do
 
   create_table "citations", force: :cascade do |t|
     t.string "text"
-    t.string "pages"
     t.string "note"
     t.bigint "source_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "plants_id"
-    t.bigint "name_id"
-    t.string "pratique"
     t.string "page"
     t.bigint "plant_id", null: false
-    t.index ["name_id"], name: "index_citations_on_name_id"
     t.index ["plant_id"], name: "index_citations_on_plant_id"
-    t.index ["plants_id"], name: "index_citations_on_plants_id"
     t.index ["source_id"], name: "index_citations_on_source_id"
+  end
+
+  create_table "citations_utilizations", force: :cascade do |t|
+    t.bigint "citation_id", null: false
+    t.bigint "utilization_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["citation_id"], name: "index_citations_utilizations_on_citation_id"
+    t.index ["utilization_id"], name: "index_citations_utilizations_on_utilization_id"
   end
 
   create_table "descriptions", force: :cascade do |t|
@@ -323,15 +326,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_22_134456) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "utilization_citations", force: :cascade do |t|
-    t.bigint "citation_id", null: false
-    t.bigint "pratique_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["citation_id"], name: "index_utilization_citations_on_citation_id"
-    t.index ["pratique_id"], name: "index_utilization_citations_on_pratique_id"
-  end
-
   create_table "utilizations", force: :cascade do |t|
     t.string "label"
     t.datetime "created_at", null: false
@@ -362,15 +356,13 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_22_134456) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "area_sources", "areas"
   add_foreign_key "area_sources", "sources"
-  add_foreign_key "citations", "names"
   add_foreign_key "citations", "plants"
-  add_foreign_key "citations", "plants", column: "plants_id"
+  add_foreign_key "citations_utilizations", "citations"
+  add_foreign_key "citations_utilizations", "utilizations"
   add_foreign_key "name_citations", "citations"
   add_foreign_key "name_citations", "names"
   add_foreign_key "person_sources", "people"
   add_foreign_key "person_sources", "sources"
   add_foreign_key "plant_sources", "plants"
   add_foreign_key "plant_sources", "sources"
-  add_foreign_key "utilization_citations", "citations"
-  add_foreign_key "utilization_citations", "pratiques"
 end

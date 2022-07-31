@@ -1,44 +1,49 @@
 <%= form_with(model: citation, class: "mt-5 mb-5") do |form| %>
-
 <% if citation.errors.any? %>
    <div class="error-message">
      <%= citation.errors.full_messages.to_sentence.capitalize %>
    </div>
  <% end %>
  <div class="form-group mb-6">
-   <%= form.collection_select :source, Source.all, :id, :title, {}, {class: "shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96"} %>
+   <label>plante</label>
+   <%= form.collection_select :plant_id, Plant.all, :id, :name, {}, {class: "w-full shadow rounded-md border border-gray-200"} %>
+ </div>
+ <div class="form-group mb-6">
+   <label>ouvrage</label>
+   <%= form.collection_select :source_id, Source.all, :id, :title, {}, {class: "w-full shadow rounded-md border border-gray-200"} %>
  </div>
   <div class="form-group mb-6">
-    <%= form.text_field :page, required: true, placeholder: "page", class: "inline-block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96" %>
+    <label>page</label>
+    <%= form.text_field :page, required: true, placeholder: "page", class: "w-full shadow rounded-md border border-gray-200" %>
   </div>
   <div class="form-group mb-6  bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
     <div class="2">
-      <h2>Select Commun Name</h2>
-        <%= form.select :citation_ids, Citation.all.collect {|a| [a.source, a.id]} ,{ }, {multiple: true, data: { controller: 'select'}} %>
+      <h2>Nom commun cité dans la source</h2>
+        <%= form.select :name_ids, Name.all.collect {|a| [a.label, a.id]} ,{ }, {multiple: true, data: { controller: 'select'}} %>
     </div>
     <div class=" mt-6">
-      <h2>Create a new common Nam</h2>
-      <%= form.fields_for :utilizations, citation.utilizations.build do |citation_fields| %>
-        <%= citation_fields.text_field :label, placeholder: "labe" %>
+      <h2>Créer un nouveau nom commun</h2>
+      <%= form.fields_for :names, citation.names.build do |citation_fields| %>
+        <%= citation_fields.text_field :label, placeholder: "label" %>
       <% end %>
     </div>
  </div>
 
  <div class="form-group mb-6  bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
    <div class="space-x-2">
-     <h2>Select Utilization</h2>
-      <%= form.collection_check_boxes :utilization_ids, Utilization.all, :id, :full_name %>
+     <h2>Sélectionner une pratique</h2>
+     <%= form.select :utilization_ids, Utilization.all.collect {|a| [a.label, a.id]} ,{ }, {multiple: true, data: { controller: 'select'}} %>
    </div>
    <div class=" mt-6">
-     <h2>Create a new utilization</h2>
+     <h2>Créer une nouvelle pratique</h2>
      <%= form.fields_for :utilizations, citation.utilizations.build do |citation_fields| %>
-       <%= citation_fields.text_field :label, placeholder: "labe" %>
+       <%= citation_fields.text_field :label, placeholder: "label" %>
      <% end %>
    </div>
 </div>
 
-  <div class="mb-5">
-    <%= form.text_area :text, placeholder: "note", class: "inline-block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96" %>
+<div class="form-group mb-6  bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <%= form.text_area :text, placeholder: "note", rows: 10, class: "w-full  shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 " %>
   </div>
 
   <div class="flex items-center justify-between">

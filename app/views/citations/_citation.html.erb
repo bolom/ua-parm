@@ -7,7 +7,7 @@
         Pratique
       </dt>
       <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-        <%= citation.pratique %>
+        <%= citation.utilizations.pluck(:label).join(",") %>
       </dd>
     </div>
   </dl>
@@ -38,12 +38,14 @@
 <% end %>
 
 <div class="border-t border-gray-200 mt-6">
-     <cite class="px-4 text-sm text-gray-600"><%= citation.text %> </cite>
+
+  <cite class="px-4 text-sm text-gray-600"><%= citation.text %> </cite>
 </div>
 
 <div class="">
   <p>
-    <%= authors(citation.source) %>, (<%= citation.source.publication_date %>). <%= citation.pages %> <cite> <%= link_to citation.source.title, source_path(citation.source), data: { turbo_frame: "_top" } %></cite>
+    <%= authors(citation.source) %>, (<%= citation.source.publication_date %>). <%= citation.page %> <cite>
+      <%= link_to citation.source.title, source_path(citation.source), data: { turbo_frame: "_top" } %></cite>
     <i><%= citation.source.edition_reference %> </i>
   </p>
   <div class="text-gray-500">

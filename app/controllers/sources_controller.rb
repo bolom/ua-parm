@@ -1,8 +1,11 @@
 class SourcesController < ApplicationController
-  def
-    index
-    @sources = Source.ordered
-    @source = Source.new
+
+  def index
+    @sources =  Source
+      .by_author(params[:author])
+      .by_area(params[:area])
+      .by_plant(params[:plant])
+      .ordered
   end
 
   def new
@@ -52,6 +55,16 @@ class SourcesController < ApplicationController
 
   private
   def source_params
-    params.require(:source).permit(:title, :publication_date, :edition_reference, :web_link, :category, :origin, :note, person_ids:[], people_attributes: [:first_name, :last_name], plant_ids:[], plants_attributes: [:scientific, :pharmacopoeia, :family], area_ids:[], areas_attributes: [:name], name_ids:[], names_attributes: [:label, :category] )
+    params.require(:source).permit(:title,
+      :publication_date,
+      :edition_reference,
+      :web_link,
+      :category,
+      :origin,
+      :note,
+      area_ids:[], areas_attributes:[:name],
+      person_ids:[], people_attributes: [:first_name, :last_name],
+      plant_ids:[], plants_attributes: [:scientific, :pharmacopoeia, :family],
+      name_ids:[], names_attributes: [:label, :category] )
   end
 end

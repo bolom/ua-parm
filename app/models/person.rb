@@ -7,6 +7,10 @@ class Person < ApplicationRecord
   has_many :sources, through: :person_sources
 
   def full_name
-    "#{first_name} #{last_name}"
+    "#{first_name.capitalize} #{last_name.capitalize}"
+  end
+
+  def initials
+    "#{first_name.first.capitalize} #{last_name.first.capitalize}"
   end
 end

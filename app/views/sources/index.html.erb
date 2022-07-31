@@ -5,12 +5,27 @@
     <div class="flex justify-between items-center" turbo_frame_tag="new_source">
       <%= link_to 'New source', new_source_path,
                               class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium",
-                              data: { turbo_frame: dom_id(@source)} %>
+                              data: { turbo_frame:"_top"} %>
     </div>
-    <%= turbo_frame_tag @source %>
-      <ol class="mt-5">
-        <%= turbo_frame_tag "sources" do %>
-          <%= render  @sources %>
-        <% end %>
-     </ol>
-</div>
+    <div class="form-group mb-6 inline-flex ">
+       <%= form_with(url: sources_path,
+                    class: "mt-5 mb-5 flex space-x-2 w-full",
+                    method: :get, data: { controller: "filters", filters_target: "form", turbo_frame: "sources" }) do |form| %>
+      <%= form.select :plant, Plant.joins(:citations).collect {|a| ["#{a.species.name}", a.id]} ,{ include_blank: true }, {class: "w-full",data: { action: 'filters#submit'}} %>
+      <%= form.select :area, Area.all.collect {|a| [a.name, a.id]} ,{ include_blank: true }, {class: "w-full",data: { action: 'filters#submit'}} %>
+      <%= form.select :author, Person.all.collect {|a| ["#{a.full_name}", a.id]} ,{ include_blank: true }, {class: "w-full",data: { action: 'filters#submit'}} %>
+    <% end %>
+  </div>
+    <div class="table border-collapse table-auto w-full text-sm">
+      <div class="table-header-group">
+        <div class="table-row">
+          <div class="table-cell border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 dark:text-slate-400 text-left"> </div>
+          <div class="table-cell border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 dark:text-slate-400 text-left"> </div>
+        </div>
+      </div>
+      <!-- content table -->
+      <turbo-frame id="sources" class="table-row-group">
+        <%= render @sources %>
+      </turbo-frame>
+    </div>
+  </div>

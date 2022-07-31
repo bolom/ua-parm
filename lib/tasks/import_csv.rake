@@ -14,7 +14,6 @@ task import_plants_csv: [:environment] do
     nui_plantes = nui_plantes.remove "nui_pla_000"
     nui_plantes = nui_plantes.to_i
     fetch_data_species(genus, species)
-
     s = Species.find_by(name: "#{genus} #{species}")
     g = s.genus
     f = g.family
@@ -81,35 +80,37 @@ end
 task import_citation_csv: [:environment] do
   puts "import_citation_csv"
   dataTable = CSV.table("#{Rails.root}/lib/tasks/citations.csv")
-  puts dataTable
   dataTable.each do |biblio|
     # retrouver plant
-    nui_plant = biblio[:lien_vers_nui_plantes] #nui_pla_00048
-    puts nui_plant
+    nui_plant = biblio[:lien_vers_nui_plantes]
     nui_plant = nui_plant.remove "nui_pla_000"
-    nui_plant = nui_plant.to_i
     plant = Plant.find_by!(nui_plant: nui_plant)
+
+    genus = plant.name.split[0]
+    species = plant.name.split[1]
+    fetch_data_species(genus, species)
     # retrouver la Source
-    #puts dataTable[:lien_vers_nui_sources]
     nui_source = biblio[:lien_vers_nui_sources] #nui_sou_00001
     source = Source.find_by(nui_source: nui_source)
-    # TO DO create la colums pratique
-    # TO DO  diviser les citations dans la commun D \n
-
-    puts plant.id
-
-    citation = source.citations.find_or_initialize_by(pratique: biblio[:types_de_pratique], text: biblio[:citation], page:  biblio[:page], note:  biblio[:note])
+    citation = source.citations.find_or_initialize_by(text:biblio[:citation], page:biblio[:page], note:biblio[:note])
     citation.plant= plant
     citation.save!
     # creer les noms vernaculaires et lier a la plantes
     names = biblio[:noms_utiliss_dans_la_source]
-    p biblio
     names.split(",").each do |name|
       n = Name.find_or_create_by(label: name)
       plant.names << n  # plants
       citation.names << n # sources
     end
-    # create la  citation
+
+    # Definir les pratiques
+   utilizations = biblio[:types_de_pratique].split(",")
+  #  p "utilizations #{utilizations}"
+    utilizations.each do |utilization|
+    #  p "utilization #{utilization}"
+      u = Utilization.find_or_create_by(label: utilization.squish)
+      citation.utilizations << u
+    end
 
  end
 end
@@ -128,9 +129,9 @@ task fill_up_missing_info_families: [:environment] do
 end
 
 task fill_up_missing_info_species: [:environment] do
-  Species.where(source: nil).each do |species|
-    genus = species.name.split[0]
-    species = species.name.split[1]
+  Species.where(source: nil).each do |s|
+    genus = s.name.split[0]
+    species = s.name.split[1]
     fetch_data_species(genus, species)
   end
 end
@@ -257,43 +258,42 @@ def fetch_synonyms(synonyms, taxon)
       t.species = taxon
       t.save!
     end
-
-    p " #{class_name} Taxon #{t.id}-#{taxon.id}"
-    s=taxon.synonyms.find_or_create_by!(synonymable_copy_id: t.id, synonymable_copy_type: class_name )
-    puts s.inspect
+    s = taxon.synonyms.find_or_create_by!(synonymable_copy_id: t.id, synonymable_copy_type: class_name )
   end
 end
 
 def fetch_descriptions(descriptions, taxon)
+  p "============> fetch_descriptions"
   descriptions.to_a.each do |k,v|
-    taxon.descriptionables.find_or_create_by(key: k, name: v["source"], from_synonym: v["fromSynonym"], descriptions: v["descriptions"])
+    taxon.descriptions.find_or_create_by(key: k, name: v["source"], from_synonym: v["fromSynonym"], descriptions: v["descriptions"])
   end
 end
 
 def fetch_distribution(distribution, taxon)
     distribution.to_a.each do |k,v|
-    taxon.build_distributionable unless taxon.distributionable
-    taxon.distributionable.update!("#{k}": v)
+    taxon.build_distribution unless taxon.distribution
+    taxon.distribution.update!("#{k}": v)
   end
 end
 
 # recupere les plantes
 def fetch_data_species(genus, species)
-  p "#{genus}-#{species}"
+  p "#{genus} - #{species}"
   r = @powo_client.search("genus:#{genus},species:#{species}" ,{'filters'=>['species_f']})
   r = r["results"][0]
   #puts r
   #create basic relation
   s = Species.find_or_create_by(fq_id: r['fqId'], name: r['name'])
+  p "Species #{s.id}"
   g = Genus.find_or_create_by(name: r['name'].split[0])
   f = Family.find_or_create_by(name: r['family'])
   s.update!(genus: g)
   g.update!(family: f)
-  puts s.genus.family.name
 
   ######
   ## get images
   ####
+  s.images.destroy_all
   images = r["images"]
   images.to_a.each do |image|
     image_url = "https:#{image["fullsize"]}"
@@ -323,11 +323,9 @@ def fetch_data_species(genus, species)
   ####
 
   fetch_descriptions(r["descriptions"], s)
-
   ######
   ## get extra distribution
   ####
-  puts r
   fetch_distribution(r["distribution"], s)
 end
 
@@ -338,7 +336,6 @@ def fetch_data_genus(genus)
   genus.update!(fq_id: r['fqId'])
   r = @powo_client.lookup(genus.fq_id,"descriptions,distribution")
   family = Family.find_or_create_by(name: r["family"])
-  p genus.id
   genus.update!(family: family)
   fetch_classification(r["classification"], "genus", genus)
   fetch_extra_info(genus, r)

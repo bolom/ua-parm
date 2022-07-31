@@ -28,10 +28,9 @@ class NamesController < ApplicationController
   end
 
   def show
-    @plant = Plant.find(params[:plant_id])
     @name = Name.find(params[:id])
   end
-  
+
   def edit
     @name = Name.find(params[:id])
   end

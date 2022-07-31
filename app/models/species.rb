@@ -9,11 +9,22 @@ class Species < ApplicationRecord
 
   has_many :descriptions , as: :descriptionable, class_name: "Description"
   has_one :distribution , as: :distributionable, class_name: "Distribution"
+  has_one :plant
+
+  def ksp
+    ksp = descriptions.find_by(key: "KSP")
+    if ksp
+      ksp.description
+    end
+  end
+
+  def description
+      ksp["general"][0]["description"] if ksp
+  end
 
   def synonymable
     Synonym.find_by(synonymable_copy_id: self.id).synonymable
   end
 
-  has_one :plant
 
 end
