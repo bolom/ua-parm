@@ -3,7 +3,6 @@ require "taxa"
 require "csv"
 @powo_client = Taxa::PlantsOfTheWorldOnline::Client.new
 
-
 task import_plants_csv: [:environment] do
   dataTable = CSV.table("#{Rails.root}/lib/tasks/plantes.csv")
   dataTable.each do |data|
