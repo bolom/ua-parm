@@ -1,0 +1,19 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  p {
+    @apply m-2;
+  }
+}
+
+@layer components {
+  .ts-control2 {
+    @apply border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-lg gap-2
+  }
+  .ts-control {
+    @apply border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-lg gap-2
+  }
+}

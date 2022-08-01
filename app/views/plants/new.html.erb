@@ -1,0 +1,5 @@
+<div class="w-full">
+  <%= turbo_frame_tag @plant do %>
+    <%= render "form", plant: @plant, name_button: "create a new plant" %>
+  <% end %>
+</div>

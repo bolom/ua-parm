@@ -1,0 +1,60 @@
+<!-- citation.source -->
+<% unless citation.plant.nil? %>
+<div class="border-t border-gray-200 mt-6">
+  <dl>
+    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+      <dt class="text-sm font-medium text-gray-500">
+        Pratique
+      </dt>
+      <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+        <%= citation.utilizations.pluck(:label).join(",") %>
+      </dd>
+    </div>
+  </dl>
+  <dl>
+    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+      <dt class="text-sm font-medium text-gray-500">
+        Noms cités
+      </dt>
+      <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+          <%= citation.names.pluck(:label).join(',') %>
+      </dd>
+    </div>
+  </dl>
+
+  <dl>
+    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+      <dt class="text-sm font-medium text-gray-500">
+        Scientific name
+      </dt>
+      <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+      <%= link_to citation.plant.species.name,
+                     plant_path(citation.plant) ,
+                     data: { turbo_frame: "_top" } %>
+      </dd>
+    </div>
+  </dl>
+  </div>
+<% end %>
+
+<div class="border-t border-gray-200 mt-6">
+
+  <cite class="px-4 text-sm text-gray-600"><%= citation.text %> </cite>
+</div>
+
+<div class="">
+  <p>
+    <%= authors(citation.source) %>, (<%= citation.source.publication_date %>). <%= citation.page %> <cite>
+      <%= link_to citation.source.title, source_path(citation.source), data: { turbo_frame: "_top" } %></cite>
+    <i><%= citation.source.edition_reference %> </i>
+  </p>
+  <div class="text-gray-500">
+  <div class="inline-flex space-x-2">
+    <%= link_to citation.source.web_link,
+    data: { turbo_frame: "_top" } ,
+    class: "flex-1"  do %>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+    </svg>
+    <% end %>
+</div>

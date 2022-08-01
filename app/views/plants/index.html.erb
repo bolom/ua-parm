@@ -1,0 +1,21 @@
+<div class="w-full">
+  <% if notice.present? %>
+  <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+  <% end %>
+  <!-- filter -->
+  <%= render partial: "filter" %>
+  <div class="mt-10">
+    <div class="table border-collapse table-auto w-full text-sm">
+      <div class="table-header-group">
+        <div class="table-row">
+          <div class="table-cell border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 dark:text-slate-400 text-left">Name</div>
+          <div class="table-cell border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 dark:text-slate-400 text-left">Pharmacopoeia</div>
+          <div class="table-cell border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 dark:text-slate-400 text-left">Family</div>
+          <div class="table-cell border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3  dark:text-slate-400 text-left">Actions</div>
+        </div>
+      </div>
+      <turbo-frame id="plants" class="table-row-group">
+          <%= render @plants %>
+      </turbo-frame>
+    </div>
+  </div>

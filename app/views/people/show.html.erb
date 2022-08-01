@@ -1,0 +1,10 @@
+<div class="class=" w-full">
+  <h1 class="text-4xl text-gray-900 mt-6">
+    <%= @person.full_name %>
+  </h1>
+  <ol class="mt-5">
+    <%= turbo_frame_tag "sources" do %>
+      <%= render @person.sources %>
+    <% end %>
+ </ol>
+</div>

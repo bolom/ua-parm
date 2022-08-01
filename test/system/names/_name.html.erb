@@ -1,0 +1,11 @@
+<tr>
+  <td><%= name.label %></td>
+  <td><%= name.category %></td>
+  <td>
+      <%= link_to "Edit", edit_name_path(name),class: "btn bg-gray-100"%>
+      <%= button_to "Delete", name_path(name),
+                      method: :delete,
+                      form: { data: { turbo_confirm: "Are you sure?" } },
+                      class: "btn bg-red-100" %>
+  </td>
+</tr>

@@ -1,0 +1,49 @@
+<%= form_with(model: plant, class: "#{dom_id(plant)}_form") do |form| %>
+  <% if plant.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(plant.errors.count, "error") %> prohibited this plant from being saved:</h2>
+
+      <ul>
+        <% plant.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="table-cell border-b border-slate-100 dark:border-slate-300 p-4 pl-8">
+      <%= plant.name %>
+  </div>
+  <div class="table-cell border-b border-slate-100 dark:border-slate-300 p-4 pl-8">
+    <%= form.select :pharmacopoeia, Plant.pharmacopoeia.keys,
+                      {},
+                      {class: "form-control shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 "}%>
+  </div>
+  <div class="table-cell border-b border-slate-100 dark:border-slate-300 p-4 pl-8">
+    <%= plant.family.name %>
+  </div>
+  <div class="table-cell p-4 pl-8 border-b border-slate-100 dark:border-slate-300">
+    <div class="inline-flex space-x-1">
+    <%= form.submit name_button, class: "px-6
+      py-2.5
+      bg-blue-600
+      text-white
+      font-medium
+      text-xs
+      leading-tight
+      capitalize
+      rounded
+      shadow-md
+
+      ease-in-out" %>
+        <%= link_to "discard changes", plants_path, class: "px-6
+          py-2.5
+          text-blue-600
+          font-medium
+          text-xs
+          leading-tight
+          capitalize
+          rounded
+          shadow-md" %>
+
+<% end %>

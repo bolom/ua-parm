@@ -1,6 +1,17 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
-  # Defines the root path route ("/")
-  # root "articles#index"
-end
+   resources :families,  only: [:show, :index]
+   resources :species,  only: [:show, :index]
+   resources :genus,  only: [:show, :index]
+   resources :variety,  only: [:show, :index]
+    resources :names,  only: [:show]
+    resources :plants,  only: [:show, :index, :edit, :update]
+    resources :people
+    resources :sources
+    resources :citations
+    resources :areas
+
+    resources :taxa,  only: [:index]
+
+    root "plants#index"
+  end

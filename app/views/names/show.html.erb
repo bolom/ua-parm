@@ -1,0 +1,26 @@
+<div class="class=" w-full">
+  <%= link_to sanitize("&larr; Back to names"), names_path,  class: 'text-sm' %>
+  <h1 class="text-4xl text-gray-900 mt-6">
+    <%= @name.label %>
+    <p class="mt-1 max-w-2xl text-sm text-gray-500">
+        <%= @name.plant.scientific %>
+      </p>
+  </h1>
+</div>
+<% @name.citations.each do |citation| %>
+<div class="border-t border-gray-200 mt-6">
+     <h2 class="text-2xl text-gray-900 mt-6">
+       <%= link_to citation.source.title,
+             source_path(citation.source),
+             data: { turbo_frame: "_top" } %>
+     </h2>
+     <cite class="px-4 text-sm text-gray-600"><%= citation.text %> </cite>
+     <small class="text-gray-500">
+        (<% citation.source.people.each do |person| %>
+        <%= link_to person.full_name,
+              person_path(person),
+              data: { turbo_frame: "_top" } %>
+       <%end%>)
+     </small>
+</div>
+<% end %>

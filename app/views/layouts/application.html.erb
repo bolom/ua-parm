@@ -1,16 +1,63 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>UaParm</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
+<head>
+  <title>UA-PARM</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  <%= javascript_importmap_tags %>
+  <%= javascript_include_tag "https://www.gstatic.com/charts/loader.js",
+                            async: true,
+                            defer: true,
+                            "data-turbolinks-eval": false %>
 
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <%= javascript_importmap_tags %>
-  </head>
+</head>
+<body>
+  <header>
+    <nav data-controller="toggle" class="m-6">
+         <!-- Hamburger Icon -->
+             <svg
+               xmlns="<http://www.w3.org/2000/svg>"
+               id="menu-button"
+               data-action="click->toggle#toggle"
+               class="h-6 w-6 cursor-pointer md:hidden block"
+               fill="none"
+               viewBox="0 0 24 24"
+               stroke="currentColor"
+             >
+               <path
+                 stroke-linecap="round"
+                 stroke-linejoin="round"
+                 stroke-width="2"
+                 d="M4 6h16M4 12h16M4 18h16"
+               />
+             </svg>
 
-  <body>
+             <div class="hidden w-full md:flex md:items-center md:w-auto "data-target="toggle.content">
+          <ul
+            class="flex flex-col mt-4 md:flex-row md:space-x-8 md:mt-0">
+            <li>
+              <%= link_to sanitize("&larr;"), :back %>
+            </li>
+              <li>
+                  <%= link_to sanitize("Plants"), plants_path,  class: "hover:text-sky-500 dark:hover:text-sky-400" %>
+              </li>
+              <li>
+                  <%= link_to sanitize("Sources"), sources_path,   class: "hover:text-sky-500 dark:hover:text-sky-400" %>
+              </li>
+              <li>
+                  <%= link_to sanitize("Citations"), citations_path,  class:"hover:text-sky-500 dark:hover:text-sky-400" %>
+              </li>
+
+          </ul>
+        </div>
+    </nav>
+  </header>
+  <main class="container mx-auto mt-10 px-5 ">
     <%= yield %>
-  </body>
+  </main>
+
+</body>
 </html>

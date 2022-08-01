@@ -1,0 +1,15 @@
+<div class="class=" w-full">
+  <h1 class="text-4xl text-gray-900 mt-6">
+    <%= @source.title %>
+    <p class="mt-1 max-w-2xl text-sm text-gray-500">
+      <% @source.people.each do |person| %>
+      <%= link_to person.full_name,
+            person_path(person),
+            data: { turbo_frame: "_top" } %>
+     <%end%>
+      </p>
+  </h1>
+</div>
+<% @source.citations.each do |citation| %>
+  <%= render  citation %>
+<% end %>

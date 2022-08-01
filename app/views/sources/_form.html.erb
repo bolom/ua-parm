@@ -1,0 +1,82 @@
+<%= form_with(model: source, class: "mt-5 mb-5") do |form| %>
+<% if source.errors.any? %>
+   <div class="error-message">
+     <%= source.errors.full_messages.to_sentence.capitalize %>
+   </div>
+ <% end %>
+
+ <div class="form-group mb-6  bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+   <div class="space-x-2">
+     <h2>Select Authors</h2>
+      <%= form.select :person_ids, Person.all.collect {|a| [a.full_name, a.id]} ,{ }, {multiple: true, data: { controller: 'select'}} %>
+   </div>
+   <div class=" mt-6">
+     <h2>Create a new author</h2>
+     <%= form.fields_for :people, source.people.build do |people_fields| %>
+       <%= people_fields.text_field :first_name, placeholder: "first_name" %>
+       <%= people_fields.text_field :last_name, placeholder: "last_name" %>
+     <% end %>
+   </div>
+</div>
+
+<div class="form-group mb-6  bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+  <% unless Area.all.empty?%>
+  <div class="space-x-2">
+    <h2>Select areas</h2>
+    <%= form.select :area_ids, Area.all.collect {|a| [a.name, a.id]} ,{}, {multiple: true, data: { controller: 'select'}} %>
+  </div>
+  <% end %>
+  <div class="mt-6">
+    <h2>Create a new area</h2>
+    <%= form.fields_for :areas, source.areas.build do |areas_fields| %>
+    <%= areas_fields.text_field :name, placeholder: "name" %>
+    <% end %>
+  </div>
+</div>
+
+  <div class="form-group mb-6">
+    <%= form.text_field :title, required: true, placeholder: "Title", class: "inline-block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96" %>
+  </div>
+  <div class="mb-5">
+    <%= form.text_field :publication_date, placeholder: "Publication date", class: "inline-block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96" %>
+  </div>
+  <div class="mb-5">
+    <%= form.text_field :edition_reference, placeholder: "Edition Reference", class: "inline-block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96" %>
+  </div>
+  <div class="mb-5">
+    <%= form.text_field :web_link, placeholder: "Link", class: "inline-block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96" %>
+  </div>
+  <div class="mb-5">
+    <%= form.text_field :category, placeholder: "Ex Archive", class: "inline-block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96" %>
+  </div>
+  <div class="mb-5">
+    <%= form.text_field :origin, placeholder: "Origin", class: "inline-block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96" %>
+  </div>
+  <div class="mb-5">
+    <%= form.text_area :note, placeholder: "note", class: "inline-block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-96" %>
+  </div>
+  <div class="flex items-center justify-between">
+    <div>
+      <%= form.submit name_button, class: "px-6
+        py-2.5
+        bg-blue-600
+        text-white
+        font-medium
+        text-xs
+        leading-tight
+        capitalize
+        rounded
+        shadow-md
+
+        ease-in-out" %>
+          <%= link_to "discard changes", sources_path, class: "px-6
+            py-2.5
+            text-blue-600
+            font-medium
+            text-xs
+            leading-tight
+            capitalize
+            rounded
+            shadow-md" %>
+    </div>  </div>
+<% end %>
