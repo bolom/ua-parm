@@ -199,15 +199,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_31_132421) do
     t.index ["source_id"], name: "index_person_sources_on_source_id"
   end
 
-  create_table "plant_sources", force: :cascade do |t|
-    t.bigint "source_id", null: false
-    t.bigint "plant_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["plant_id"], name: "index_plant_sources_on_plant_id"
-    t.index ["source_id"], name: "index_plant_sources_on_source_id"
-  end
-
   create_table "plants", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -218,12 +209,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_31_132421) do
     t.integer "family_id"
     t.index ["family_id"], name: "index_plants_on_family_id"
     t.index ["genus_id"], name: "index_plants_on_genus_id"
-  end
-
-  create_table "pratiques", force: :cascade do |t|
-    t.string "label"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "sources", force: :cascade do |t|
@@ -363,6 +348,4 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_31_132421) do
   add_foreign_key "name_citations", "names"
   add_foreign_key "person_sources", "people"
   add_foreign_key "person_sources", "sources"
-  add_foreign_key "plant_sources", "plants"
-  add_foreign_key "plant_sources", "sources"
 end
