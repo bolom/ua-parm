@@ -7,7 +7,7 @@ class Citation < ApplicationRecord
   has_many :citations_utilizations, dependent: :destroy
   has_many :utilizations, -> { distinct }, through: :citations_utilizations
 
-  has_many :name_citations, dependent: :destroy, dependent: :destroy
+  has_many :name_citations, dependent: :destroy
   has_many :names, -> { distinct }, through: :name_citations
 
   accepts_nested_attributes_for :utilizations, reject_if: :all_blank, allow_destroy: true
