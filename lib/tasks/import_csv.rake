@@ -30,14 +30,12 @@ task import_plants_csv: [:environment] do
     pharmacope = pharmacope.downcase.to_sym
     p.update!(pharmacopoeia: pharmacope, genus: g, species: s, family: f)
 
-  #nom vernaculaires
-
-  nom_vernaculaires = data[:nom_vernaculaire]
-  nom_vernaculaires = nom_vernaculaires.split(",")
-  nom_vernaculaires.each do |nom_vernaculaire|
-    p.names.find_or_create_by(label: nom_vernaculaire )
-  end
-  end
+    nom_vernaculaires = data[:nom_vernaculaire]
+    nom_vernaculaires = nom_vernaculaires.split(",")
+    nom_vernaculaires.each do |nom_vernaculaire|
+      p.names.find_or_create_by(label: nom_vernaculaire )
+    end
+    end
 end
 
 
