@@ -14,7 +14,7 @@ class Species < ApplicationRecord
   def ksp
     ksp = descriptions.find_by(key: "KSP")
     if ksp
-      ksp.description
+      ksp.descriptions
     end
   end
 
