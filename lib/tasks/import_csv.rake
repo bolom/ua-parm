@@ -364,7 +364,6 @@ def fetch_plants(source, biblio)
     plants = plants.remove! "DR"
     plants = plants.remove! "/"
 
-
     plants.strip! # espace ban
     plants.gsub! ';',',' # remplace ; ,
 
