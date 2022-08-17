@@ -1,5 +1,5 @@
 <h1 class="text-4xl text-gray-900 mt-6">
-  <em><%= @plant.species.name %></em> <small><%= @plant.species.authors.join(' ') %></small>
+  <%= plant_name(@plant)%>
 </h1>
 <div class="border-t border-gray-200 bg-gray-50 p-2 flex">
   <div class="flex-none w-200">
@@ -61,7 +61,7 @@
   <ul class="grid grid-cols-2 gap-2">
     <% @plant.species.synonyms.each do |synonym| %>
         <li>
-          <%= link_to send("#{synonym.synonymable_copy_type.downcase}_path",synonym.copy ),
+          <%= link_to species_path(synonym.copy ),
                 data: { turbo_frame: "_top" }  do %>
                 <em><%= synonym.copy.name %></em> <%= synonym.copy.authors.join(' ') %>
           <% end %>
@@ -71,6 +71,7 @@
 </div>
 
 <!-- Bibliographie -->
+<% unless @plant.sources.empty? %>
 <div class="border-t border-gray-200 bg-gray-50 p2 mt-6">
   <h2 class="text-2xl text-gray-900 mt-6 mb-2">Bibliographie</h2>
   <ul class="grid grid-cols-2 gap-2">
@@ -84,8 +85,9 @@
     <% end %>
   </ul>
 </div>
-
+<% end %>
 <!-- Descriptions -->
+<% unless @description.blank? %>
 <div class="border-t border-gray-200 bg-gray-50 p2 mt-6">
   <h2 class="text-2xl text-gray-900 mt-6 mb-2">According to Knew Species Profiles</h2>
   <dl class="">
@@ -95,19 +97,21 @@
      <dd class="mb-2 .p:mb-2"><%== @description %></dd>
   </dl>
 </div>
-
-
+<% end %>
 <div class="p2 mt-6">
   <h2 class="text-2xl text-gray-900 mt-6 mb-2">Distribution</h2>
-  <dl>
-    <dt class="text-1xl text-gray-900 mt-6 mb-2"><strong>Native to:</strong></dt>
-    <% @plant.species.distribution.natives.each do |n| %>
-     <%= n["name"]%>
+  <div class="grid grid-cols-2 gap-2">
+    <% unless @natives.empty? %>
+    <dl class="">
+      <dt class="text-1xl text-gray-900 mb-2"><strong>Native to:</strong></dt>
+      <dd><%= @natives.join(",") %></dd>
+    </dl>
     <% end %>
-    <dt class="text-1xl text-gray-900 mt-6 mb-2"><strong>Introduced into:</strong></dt>
-    <% @plant.species.distribution.introduced.each do |n| %>
-     <%= n["name"]%>
+    <% unless @introduced.empty? %>
+      <dl class="">
+        <dt class="text-1xl text-gray-900  mb-2"><strong>Introduced into:</strong></dt>
+        <dd><%= @introduced.join(",") %></dd>
+      </dl>
     <% end %>
-  </dl>
-
+  </div>
 </div>

@@ -3,6 +3,23 @@ require "taxa"
 require "csv"
 @powo_client = Taxa::PlantsOfTheWorldOnline::Client.new
 
+
+task import_common_name_plants_csv: [:environment] do
+  dataTable = CSV.table("#{Rails.root}/lib/tasks/plantes.csv")
+  dataTable.each do |data|
+    nui_plantes = data[:nui_plantes]
+    nui_plantes = nui_plantes.remove "nui_pla_000"
+    nui_plantes = nui_plantes.to_i
+    p = Plant.find_by(nui_plant: nui_plantes.to_i)
+    nom_vernaculaires = data[:nom_vernaculaire]
+    nom_vernaculaires = nom_vernaculaires.split(",")
+    nom_vernaculaires.each do |nom_vernaculaire|
+      nom_vernaculaire = nom_vernaculaire.downcase.squish
+      name = Name.find_or_create_by(label: nom_vernaculaire )
+      p.names << name
+    end
+  end
+end
 task import_plants_csv: [:environment] do
   dataTable = CSV.table("#{Rails.root}/lib/tasks/plantes.csv")
   dataTable.each do |data|
@@ -133,76 +150,23 @@ task fill_up_missing_info_species: [:environment] do
   end
 end
 
-task fill_up_missing_info_sub_species: [:environment] do
-  SubSpecies.all.each do |sub_species|
-    r = @powo_client.lookup(sub_species.fq_id,"descriptions,distribution")
-    species = Species.find_or_create_by(name: r["species"])
-    sub_species.update!(species: species)
-    fetch_classification(r["classification"], "subspecies", sub_species)
-    fetch_extra_info(sub_species, r)
-    fetch_synonyms(r["synonyms"], sub_species)
+
+task update_synonyms_for_plants: [:environment] do
+  Plant.all.each do |plant|
+    ids = plant.species.synonyms.pluck(:synonymable_copy_id)
+    plant.update(synonym_ids: ids )
   end
 end
-
-task fill_up_missing_info_varieties: [:environment] do
-  Variety.all.each do |variety|
-    r = @powo_client.lookup(variety.fq_id,"descriptions,distribution")
-    species = Species.find_by(name: r["species"])
-    variety.update!(species: species, infraspecies: r["infraspecies"])
-    fetch_classification(r["classification"], "variety", variety)
-    fetch_extra_info(variety, r)
-    fetch_synonyms(r["synonyms"], variety)
-  end
-end
-
-task fill_up_missing_info_sub_varieties: [:environment] do
-  Subvariety.all.each do |sub_variety|
-    r = @powo_client.lookup(sub_variety.fq_id,"descriptions,distribution")
-    species = Species.find_or_create_by(name: r["species"])
-    sub_variety.update!(species: species, infraspecies: r["infraspecies"])
-    fetch_classification(r["classification"], "subvariety", sub_variety)
-    fetch_extra_info(sub_variety, r)
-    fetch_synonyms(r["synonyms"], sub_variety)
-  end
-end
-
-task fill_up_missing_info_unraked: [:environment] do
-  UnRanked.all.each do |unraked|
-    r = @powo_client.lookup(unraked.fq_id,"descriptions,distribution")
-    fetch_classification(r["classification"], "unraked", unraked)
-    fetch_extra_info(unraked, r)
-    fetch_synonyms(r["synonyms"], unraked)
-  end
-end
-
-task fill_up_missing_info_form: [:environment] do
-  Form.all.each do |form|
-    r = @powo_client.lookup(form.fq_id,"descriptions,distribution")
-    species = Species.find_or_create_by(name: r["species"])
-    form.update!(species: species, infraspecies: r["infraspecies"])
-    fetch_classification(r["classification"], "form", form)
-    fetch_extra_info(form, r)
-    fetch_synonyms(r["synonyms"], form)
-  end
-end
-
-
 
 ####################
 def fetch_classification(classification, rank, taxon)
   p "============> fetch_classification"
   classification.each do |c|
     class_name = c["rank"].downcase.upcase_first
-    next if class_name == rank
-    if class_name == "Unranked"
-      class_name = "UnRanked"
-    end
-
-    if class_name == "Subspecies"
-      class_name = "SubSpecies"
+    if ["Subspecies","Variety","Unranked","Subvariety","Form"].include? class_name
+      class_name = "Species"
     end
     class_object = Object.const_get(class_name)
-    p "class_name #{class_name}"
     t = class_object.find_or_create_by!(name: c['name'])
     t.fq_id = c["fqId"]
     t.authors = c["author"].split
@@ -233,11 +197,8 @@ def fetch_synonyms(synonyms, taxon)
   synonyms.to_a.each do |c|
     #0 Retrouver le rank du Taxon
     class_name = c["rank"].downcase.upcase_first #Ex Species species
-    if class_name == "Subspecies"
-      class_name = "SubSpecies"
-    end
-    if class_name == "Unranked"
-      class_name = "UnRanked"
+    if ["Subspecies","Variety","Unranked","Subvariety","Form"].include? class_name
+      class_name = "Species"
     end
     class_object = Object.const_get(class_name)
     #1. Taxon find_or_create_by

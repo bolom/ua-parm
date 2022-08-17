@@ -1,12 +1,19 @@
 class PlantsController < ApplicationController
   def index
     @plant = Plant.new
-    @plants=   Plant
-      .search(params[:search])
-      .by_pharmacopoeia(params[:pharmacopoeia])
-      .by_family(params[:family])
-      .by_genus(params[:genus])
-      .ordered
+    @plants  = []
+    if params[:synonym].present?
+      @plants =  Plant.by_synonym(params[:synonym]).ordered
+    elsif params[:commun].present?
+        @plants =  Plant.find(params[:commun])
+    else  @plants =  Plant
+        .search(params[:search])
+        .by_plant(params[:plant])
+        .by_pharmacopoeia(params[:pharmacopoeia])
+        .by_family(params[:family])
+        .by_genus(params[:genus])
+        .ordered
+    end
   end
 
   def new
@@ -25,16 +32,8 @@ class PlantsController < ApplicationController
     @plant = Plant.find(params[:id])
     @ksp = @plant.species.ksp
     @description = @plant.species.description
-    @natives = []
-    @introduced = []
-
-     @plant.species.distribution.natives.each do |n|
-       @natives << n["name"]
-     end
-
-     @plant.species.distribution.introduced.each do |n|
-       @introduced << n["name"]
-     end
+    @natives = @plant.species.natives
+    @introduced = @plant.species.introduced
   end
 
   def edit

@@ -15,7 +15,6 @@ export default class extends Controller {
   findResults(event) {
     console.log(event.target.value);
     var url = this.urlValue.replace(/%s/g, encodeURIComponent(event.target.value)) ;
-    console.log(url);
     fetch(url, {
     method: 'GET',
     }).then(response => response.json())
