@@ -61,10 +61,7 @@
   <ul class="grid grid-cols-2 gap-2">
     <% @plant.species.synonyms.each do |synonym| %>
         <li>
-          <%= link_to species_path(synonym.copy ),
-                data: { turbo_frame: "_top" }  do %>
-                <em><%= synonym.copy.name %></em> <%= synonym.copy.authors.join(' ') %>
-          <% end %>
+          <em><%= synonym.copy.name %></em> <%= synonym.copy.authors.join(' ') %>
         </li>
     <% end %>
   </ul>
