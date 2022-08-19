@@ -49,7 +49,9 @@ task import_plants_csv: [:environment] do
     nom_vernaculaires = data[:nom_vernaculaire]
     nom_vernaculaires = nom_vernaculaires.split(",")
     nom_vernaculaires.each do |nom_vernaculaire|
-      p.names.find_or_create_by(label: nom_vernaculaire )
+      nom_vernaculaire = nom_vernaculaire.downcase.squish
+      name = Name.find_or_create_by(label: nom_vernaculaire )
+      p.names << name
     end
     end
 end
