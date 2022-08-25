@@ -55,7 +55,7 @@ class PlantsController < ApplicationController
 
   private
   def plant_params
-    params.require(:plant).permit(:scientific, :pharmacopoeia, :family)
+    params.require(:plant).permit(:scientific, :pharmacopoeia, :family, name_ids:[], names_attributes: [:label])
   end
 
 end

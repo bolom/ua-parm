@@ -20,6 +20,9 @@ class Plant < ApplicationRecord
 
   #accepts_nested_attributes_for :sources
 
+  accepts_nested_attributes_for :names, reject_if: :all_blank, allow_destroy: true
+
+
   pg_search_scope :search_by_scientific,
     against: :scientific,
     using: { tsearch: { prefix: true } }

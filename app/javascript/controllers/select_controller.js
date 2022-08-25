@@ -14,6 +14,7 @@ export default class extends Controller {
     new TomSelect(this.element,{
 	       create: true,
          maxItems: maxItems,
+         maxOptions: 500,
          sortField: {
            field: "text",
 		       direction: "asc"

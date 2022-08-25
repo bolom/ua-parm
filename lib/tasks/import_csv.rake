@@ -4,7 +4,9 @@ require "csv"
 @powo_client = Taxa::PlantsOfTheWorldOnline::Client.new
 
 
+
 task import_common_name_plants_csv: [:environment] do
+  #plantes
   dataTable = CSV.table("#{Rails.root}/lib/tasks/plantes.csv")
   dataTable.each do |data|
     nui_plantes = data[:nui_plantes]
@@ -19,7 +21,30 @@ task import_common_name_plants_csv: [:environment] do
       p.names << name
     end
   end
+
+  #citations
+  dataTable = CSV.table("#{Rails.root}/lib/tasks/citations.csv")
+  dataTable.each do |biblio|
+    # retrouver plant
+    nui_plant = biblio[:lien_vers_nui_plantes]
+    nui_plant = nui_plant.remove "nui_pla_000"
+    plant = Plant.find_by!(nui_plant: nui_plant)
+
+    # retrouver la Source
+    nui_source = biblio[:lien_vers_nui_sources] #nui_sou_00001
+    source = Source.find_by(nui_source: nui_source)
+    names = biblio[:noms_utiliss_dans_la_source]
+    citation = source.citations.find_or_initialize_by(text:biblio[:citation], page:biblio[:page], note:biblio[:note])
+
+    names.split(",").each do |name|
+      name = name.downcase.squish
+      n = Name.find_or_create_by(label: name)
+      plant.names << n  # plants
+      citation.names << n # sources
+    end
+ end
 end
+
 task import_plants_csv: [:environment] do
   dataTable = CSV.table("#{Rails.root}/lib/tasks/plantes.csv")
   dataTable.each do |data|
@@ -109,11 +134,13 @@ task import_citation_csv: [:environment] do
     nui_source = biblio[:lien_vers_nui_sources] #nui_sou_00001
     source = Source.find_by(nui_source: nui_source)
     citation = source.citations.find_or_initialize_by(text:biblio[:citation], page:biblio[:page], note:biblio[:note])
+
     citation.plant= plant
     citation.save!
     # creer les noms vernaculaires et lier a la plantes
     names = biblio[:noms_utiliss_dans_la_source]
     names.split(",").each do |name|
+      name = name.downcase.squish
       n = Name.find_or_create_by(label: name)
       plant.names << n  # plants
       citation.names << n # sources
