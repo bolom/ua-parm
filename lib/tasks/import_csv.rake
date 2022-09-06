@@ -388,9 +388,14 @@ def fetch_plants(source, biblio)
   end
 end
 
+
 def fetch_areas(source, biblio)
   unless biblio[:espace_mtq_couvert].nil?
-    a = Area.find_or_create_by(name: biblio[:espace_mtq_couvert]) # Martinique
+    #sans espace devant ou apres
+    # minuscule
+    area = biblio[:espace_mtq_couvert]
+    area = area.downcase.squish #
+    a = Area.find_or_create_by(name: area) # Martinique
     source.areas << a
   end
 
