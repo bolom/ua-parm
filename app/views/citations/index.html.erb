@@ -16,7 +16,7 @@
                     method: :get, data: { controller: "filters", filters_target: "form", turbo_frame: "citations" }) do |form| %>
   <div class="flex space-x-2 w-full mb-5">
     <%= form.select :plant, Citation.plants, { include_blank: "Nom scientifique" }, {class: "w-full",data: { action: 'filters#submit'}} %>
-    <%= form.select :name, Citation.names,  { include_blank: "Nom vernaculaire" }, {class: "w-full",data: { action: 'filters#submit'}} %>
+    <%= form.select :name, Citation.names,  { include_blank:  "Nom vernaculaire" }, {class: "w-full",data: { action: 'filters#submit'}} %>
   </div>
   <div class="flex space-x-2 w-full  mb-5">
     <%= form.select :source, Citation.sources ,{ include_blank: "Source" }, {class: "w-full", data: { action: 'filters#submit'}} %>

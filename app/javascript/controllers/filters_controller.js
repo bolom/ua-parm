@@ -13,14 +13,12 @@ export default class extends Controller {
   }
 
   findResults(event) {
-    console.log(event.target.value);
     var url = this.urlValue.replace(/%s/g, encodeURIComponent(event.target.value)) ;
     fetch(url, {
-    method: 'GET',
+      method: 'GET',
     }).then(response => response.json())
     .then((data) => {
-    //console.log(data)
-    this.refreshDropdownValues(data)
+      this.refreshDropdownValues(data)
     })
   }
 
@@ -28,7 +26,6 @@ export default class extends Controller {
   refreshDropdownValues(data) {
     console.log(data)
     let dropdown= document.getElementById("plant_scientific");
-    console.log(dropdown);
     dropdown.innerHTML = ""
      for(var i = 0; i < data.length; i++) {
        var opt = data[i]

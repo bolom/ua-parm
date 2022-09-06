@@ -19,7 +19,6 @@ class Source < ApplicationRecord
   has_many :plant_sources, dependent: :destroy
   has_many :plants, -> { distinct }, through: :plant_sources
 
-
   scope :ordered, -> { order(id: :desc) }
   scope :by_author, ->(value) { joins(:person_sources).where("person_id = ? ", value) if value.present? }
   scope :by_area, ->(value) { joins(:area_sources).where("area_id = ? ", value) if value.present? }
@@ -31,6 +30,14 @@ class Source < ApplicationRecord
        authors << "#{person.first.capitalize} #{person.last.capitalize}"
      end
      authors.join(',')
+   end
+
+   def self.authors
+     Person.select(:id,:last_name,:first_name).distinct.joins(:sources).order('people.last_name': :asc).collect {|a| ["#{a.full_name}", a.id]}
+   end
+
+   def self.areas
+     Area.select(:name,:id).joins(:sources).distinct.order('areas.name': :asc).collect {|a| [a.name,a.id]}
    end
 
    def plants_names

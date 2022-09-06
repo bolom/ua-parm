@@ -2,18 +2,27 @@
   <% if notice.present? %>
   <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
   <% end %>
-    <div class="flex justify-between items-center" turbo_frame_tag="new_source">
+    <div class="flex justify-end" turbo_frame_tag="new_source">
       <%= link_to 'New source', new_source_path,
                               class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium",
                               data: { turbo_frame:"_top"} %>
     </div>
-    <div class="form-group mb-6 inline-flex ">
+    <div class="form-group mb-6">
        <%= form_with(url: sources_path,
-                    class: "mt-5 mb-5 flex space-x-2 w-full",
+                    class: "mt-5 mb-5",
                     method: :get, data: { controller: "filters", filters_target: "form", turbo_frame: "sources" }) do |form| %>
-      <%= form.select :plant, Plant.joins(:citations).collect {|a| ["#{a.species.name}", a.id]} ,{ include_blank: true }, {class: "w-full",data: { action: 'filters#submit'}} %>
-      <%= form.select :area, Area.all.collect {|a| [a.name, a.id]} ,{ include_blank: true }, {class: "w-full",data: { action: 'filters#submit'}} %>
-      <%= form.select :author, Person.all.collect {|a| ["#{a.full_name}", a.id]} ,{ include_blank: true }, {class: "w-full",data: { action: 'filters#submit'}} %>
+      <span>Filtrer par :</span>
+      <div class="flex space-x-2 w-full  mb-5">
+        <%= form.select :author, Source.authors ,{ include_blank: "Authors" }, {class: "w-full",data: { action: 'filters#submit'}} %>
+      </div>
+      <div class="flex space-x-2 w-full mb-5">
+        <%= form.select :plant, Citation.plants, { include_blank: "Nom scientifique" }, {class: "w-full",data: { action: 'filters#submit'}} %>
+        <%= form.select :name, Citation.names,  { include_blank: "Nom vernaculaire" }, {class: "w-full",data: { action: 'filters#submit'}} %>
+      </div>
+      <div class="flex space-x-2 w-full  mb-5">
+        <%= form.select :area, Source.areas,{ include_blank: "Areas" }, {class: "w-full",data: { action: 'filters#submit'}} %>
+      </div>
+
     <% end %>
   </div>
     <div class="table border-collapse table-auto w-full text-sm">
