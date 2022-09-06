@@ -18,5 +18,21 @@ class Citation < ApplicationRecord
   scope :by_source, ->(value) { where("source_id = ? ", value) if value.present? }
   scope :by_utilization, ->(value) { joins(:citations_utilizations).where("utilization_id = ? ", value) if value.present? }
   scope :by_name, ->(value) { joins(:name_citations).where("name_id = ? ", value) if value.present? }
-  scope :by_plant, ->(value) { joins(:citations).where("plant_id = ? ", value) if value.present? }
+  scope :by_plant, ->(value) { where("plant_id = ? ", value) if value.present? }
+
+  def self.plants
+     Plant.select(:name).distinct.joins(:citations,:species).order('species.name': :asc).pluck('species.name', 'plants.id')
+  end
+
+  def self.names
+    Name.select(:label).distinct.joins(:citations,:name_citations).order('names.label': :asc).pluck('names.label', 'names.id')
+ end
+
+ def self.sources
+   Source.select(:title).distinct.joins(:citations).order('sources.title': :asc).pluck('sources.title', 'sources.id')
+ end
+
+ def self.utilizations
+   Utilization.select(:label).distinct.joins(:citations_utilizations).order('utilizations.label': :asc).pluck('utilizations.label', 'utilizations.id')
+ end
 end
