@@ -4,6 +4,11 @@ require "csv"
 @powo_client = Taxa::PlantsOfTheWorldOnline::Client.new
 
 
+task initial_setup: [:environment] do
+  Rake::Task["import_plants_csv"].invoke
+  Rake::Task["import_biblio_csv"].invoke
+  Rake::Task["import_citation_csv"].invoke
+end
 
 task import_common_name_plants_csv: [:environment] do
   #plantes
@@ -393,7 +398,7 @@ def fetch_areas(source, biblio)
   unless biblio[:espace_mtq_couvert].nil?
     #sans espace devant ou apres
     # minuscule
-    area = biblio[:espace_mtq_couvert]
+    area = biblio[:espace_mtq_couvert].downcase.squish
     area = area.downcase.squish #
     a = Area.find_or_create_by(name: area) # Martinique
     source.areas << a
@@ -406,6 +411,7 @@ def fetch_areas(source, biblio)
     zones.gsub! ';',',' # remplace ; ,
     #toutes les zones
     zones.split(",").each do |zone|
+      zone = zone.downcase.squish #
       a = Area.find_or_create_by(name: zone)
       source.areas << a
     end
@@ -431,8 +437,8 @@ def fetch_authors(source, authors)
      dates.slice! ')' # supprimer ma )
      dates = dates.split("-")
      next if dates.empty? # date avec () mais vide
-     p "date de naissance #{dates[0].strip}"  unless dates[0].nil?
-     p "date de dcd #{dates[1].strip}" unless dates[1].nil?
+     #p "date de naissance #{dates[0].strip}"  unless dates[0].nil?
+     #p "date de dcd #{dates[1].strip}" unless dates[1].nil?
 
      person.update(date_birth: dates[0].strip) unless dates[0].nil?
      person.update(date_dc: dates[1].strip) unless dates[1].nil?

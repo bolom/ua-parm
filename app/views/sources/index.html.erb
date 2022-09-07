@@ -20,7 +20,7 @@
         <%= form.select :name, Citation.names,  { include_blank: "Nom vernaculaire" }, {class: "w-full",data: { action: 'filters#submit'}} %>
       </div>
       <div class="flex space-x-2 w-full  mb-5">
-        <%= form.select :area, Source.areas,{ include_blank: "Areas" }, {class: "w-full",data: { action: 'filters#submit'}} %>
+        <%= form.select :area, Source.areas,{ include_blank: "Région" }, {class: "w-full",data: { action: 'filters#submit'}} %>
       </div>
 
     <% end %>
