@@ -3,23 +3,36 @@
   <%= notice %>
 </p>
 <% end %>
-<h1 class="font-bold text-2xl">People Manager</h1>
-<!-- add new person -->
-<div class="mt-4">
-  <%= render "form", person: @person %>
+
+
+<div class="flex justify-end" turbo_frame_tag="new_source">
+<%= link_to 'New Author', new_person_path,
+                        class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium",
+                        data: { turbo_frame:"_top"} %>
 </div>
-<!-- all people -->
-<div id="plants" class="mt-5">
-    <table class="table-auto">
-      <thead>
-      <tr>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Category</th>
-      </tr>
-    </thead>
-    <tbody>
-        <%= render @people %>
-      <tbody>
-    </table>
-  </div>
+
+<div class="form-group mb-6">
+
+
+  <!-- tableau Nom Prénom Action -->
+  <div class="w-full">
+    <% if notice.present? %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice">
+      <%= notice %>
+    </p>
+    <% end %>
+    <!-- filter -->
+    <div class="mt-10">
+      <div class="table border-collapse table-auto w-full">
+        <div class="table-header-group">
+          <div class="table-row">
+            <div class="table-cell border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 dark:text-slate-400 text-left">First Name</div>
+            <div class="table-cell border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 dark:text-slate-400 text-left">Last Name</div>
+            <div class="table-cell border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 dark:text-slate-400 text-left">Actions</div>
+          </div>
+        </div>
+        <turbo-frame id="people" class="table-row-group">
+            <%= render @people %>
+        </turbo-frame>
+      </div>
+    </div>
