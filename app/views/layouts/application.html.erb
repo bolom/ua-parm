@@ -42,16 +42,16 @@
               <%= link_to sanitize("&larr;"), :back %>
             </li>
               <li>
-                  <%= link_to sanitize("Plantes"), plants_path,  class: "hover:text-sky-500 dark:hover:text-sky-400" %>
+                  <%= link_to sanitize("Plantes"), plants_path,  class:  active_class_if_url(plants_path) %>
               </li>
               <li>
-                  <%= link_to sanitize("Bibliographie"), sources_path,   class: "hover:text-sky-500 dark:hover:text-sky-400" %>
+                  <%= link_to sanitize("Bibliographie"), sources_path,   class:  active_class_if_url(sources_path) %>
               </li>
               <li>
-                  <%= link_to sanitize("Citations"), citations_path,  class:"hover:text-sky-500 dark:hover:text-sky-400" %>
+                  <%= link_to sanitize("Citations"), citations_path,  class: active_class_if_url(citations_path) %>
               </li>
               <li>
-                  <%= link_to sanitize("Auteurs"), people_path,  class:"hover:text-sky-500 dark:hover:text-sky-400" %>
+                  <%= link_to sanitize("Auteurs"), people_path,  class: active_class_if_url(people_path) %>
               </li>
           </ul>
         </div>
