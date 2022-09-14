@@ -29,10 +29,10 @@ class Plant < ApplicationRecord
 
   scope :ordered, -> { joins(:species).order(name: :asc) }
   scope :by_pharmacopoeia, -> (value) { send(value) if value.in?(pharmacopoeia.keys) }
-  scope :by_plant, ->(value) { where("species_id = ? ", value) if value.present? }
-  scope :by_family, ->(value) { where("family_id = ? ", value) if value.present? }
-  scope :by_genus, ->(value) { where("genus_id = ? ", value) if value.present? }
-  scope :by_gspecies, ->(value) { where("species_id = ? ", value) if value.present? }
+  scope :by_plant, ->(value) { where("plants.species_id = ? ", value) if value.present? }
+  scope :by_family, ->(value) { where("plants.family_id = ? ", value) if value.present? }
+  scope :by_genus, ->(value) { where("plants.genus_id = ? ", value) if value.present? }
+  scope :by_species, ->(value) { where("plants.species_id = ? ", value) if value.present? }
   scope :by_synonym, ->(value) { where("? = ANY (synonym_ids)", value) if value.present? }
 
   scope :search, ->(value) { search_by_scientific(value) if value.present? }
