@@ -1,18 +1,12 @@
 <turbo-frame id="<%= "plant_#{plant.id}" %>" class="table-row border-b">
   <div class="table-cell border-b border-slate-100 dark:border-slate-300 p-4 pl-8">
-    <div class="text-lg">
-      <%= link_to plant_path(plant), data: { turbo_frame: "_top" } do %>
-        <%= plant_name(plant) %>
-      <% end %>
-    </div>
-    <dl class="text-sm">
-      <dt class="mt-2">Synonyms</dt>
-      <dd >
-        <em><%= plant.species.synonymables.pluck(:name).join(", ") %></em>
-      </dd>
-      <dt class="mt-2">Nom(s) commun</dt>
-      <dd >
-        <small><%=  plant.names.pluck(:label).join(", ") %></small>
+   <dl class="">
+      <dt class="mt-2 text-lg"><%= link_to plant_name(plant), plant_path(plant), data: { turbo_frame: "_top" } %></dt>
+      <dt class="mt-2">
+        <%= link_to image_tag(plant.image), plant_path(plant), data: { turbo_frame: "_top" } %>
+      </dt>
+      <dd class="mt-2 text-sm">
+      <b>Nom(s) vernaculaire(s)</b> : <%=  plant.names.pluck(:label).join(", ") %>
       </dd>
     </dl>
   </div>

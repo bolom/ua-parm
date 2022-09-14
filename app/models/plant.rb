@@ -41,9 +41,22 @@ class Plant < ApplicationRecord
     species.name
   end
 
+  def image
+    if species.images.empty?
+      ""
+    else
+      species.images.first.variant(resize_to_limit: [200, 200])
+    end
+
+  end
+
+  def self.primary_and_synomyms
+    [['Principales',Species.with_plants.collect {|a| [a.name, a.id]}] , ['Synonymes',  Plant.select(:name, :"names.id").synonyms.pluck(:name, :id)]]
+  end
+
   def self.synonyms
-    ids = Plant.all.pluck(:synonym_ids).join(",")
+    ids = Plant.pluck(:id, :synonym_ids).join(",")
     ids = ids.split(",").reject(&:empty?)
-    Species.where(id: ids)
+    Species.where(id: ids).order(name: :asc)
   end
 end

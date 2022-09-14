@@ -81,3 +81,5 @@ gem 'taxa',git:  "https://github.com/bolom/taxa.git"
 gem "down", "~> 5.0"
 gem 'csv'
 gem "aws-sdk-s3", require: false
+gem "sentry-ruby"
+gem "sentry-rails"

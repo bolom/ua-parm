@@ -1,14 +1,16 @@
 <div class="form-group mb-6  w-full">
-  <span>Filtrer par : </span>
-   <%= form_with(url: plants_path,
-                class: "mt-5 mb-5 inline-flex  space-x-2 w-full",
+<%= form_with(url: plants_path,
+                class: "mt-5 mb-5 ",
                 method: :get, data: { controller: "filters", filters_target: "form", turbo_frame: "plants" }) do |form| %>
-<div class="">
-  <%= form.select :plant,  Species.with_plants.collect {|a| [a.name, a.id]} ,{ include_blank: "Nom" }, {class: "w-full",data: {  action: 'filters#submit'}} %>
-  <%= form.select :commun, Name.names_plants ,{ include_blank: "Vernaculaire" }, {class: "w-full", data: { action: 'filters#submit'}} %>
-  <%= form.select :synonym, Plant.synonyms.pluck(:name, :id) ,{ include_blank: "synonyms" }, {class: "w-full", data: { action: 'filters#submit'}} %>
+<div class="mb-5 w-full flex flex-col">
+  <span>Plantes</span>
+  <div class="mb-5 inline-flex space-x-2">
+    <%= form.select :plant,  grouped_options_for_select(Plant.primary_and_synomyms) ,{ include_blank: "Nom Scientique" }, {class: "w-full",data: {  action: 'filters#submit'}} %>
+    <%= form.select :commun, Name.names_plants ,{ include_blank: "Nom Vernaculaire" }, {class: "w-full", data: { action: 'filters#submit'}} %>
+  </div>
 </div>
-<div class="">
+
+<div class="mb-5 inline-flex  space-x-2 w-full">
   <%= form.select :family, Family.with_plants.collect {|a| [a.name, a.id]} ,{ include_blank: "Famille" }, {class: "w-full",data: { action: 'filters#submit'}} %>
   <%= form.select :genus, Genus.with_plants.collect {|a| [a.name, a.id]} ,{ include_blank: "Genre" }, {class: "w-full",data: {action: 'filters#submit'}} %>
   <%= form.select :pharmacopoeia, Plant.pharmacopoeia.keys ,{ include_blank: "Pharmacopée" }, {class: "w-full",data: {action: 'filters#submit'}} %>
