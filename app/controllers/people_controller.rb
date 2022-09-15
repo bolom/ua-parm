@@ -1,29 +1,40 @@
 class PeopleController < ApplicationController
   def index
-    @person = Person.new
-    @people = Person.all
+    @people = Person.all.order(:last_name)
   end
+
+  def new
+    @person = Person.new
+  end
+
   def create
     @person = Person.new(person_params)
-    respond_to do |format|
-      if @person.save
-        format.html { redirect_to people_url, notice: "Person was successfully created" }
-      else
-        format.html { render :new, status: :unprocessable_entity }
+    if @person.save
+      respond_to do |format|
+        format.html { redirect_to people_path, notice: "Person was successfully created." }
+        format.turbo_stream
       end
+    else
+      render :new, status: :unprocessable_entity
     end
+
   end
 
   def destroy
     @person = Person.find(params[:id])
     @person.destroy
-    redirect_to people_url, notice: "Person was successfully deleted."
+
+    respond_to do |format|
+      format.html { redirect_to people_url, notice: "Person was successfully deleted."}
+      format.turbo_stream
+    end
+
   end
 
   def show
     @person = Person.find(params[:id])
   end
-  
+
   def edit
     @person = Person.find(params[:id])
   end
@@ -42,6 +53,6 @@ class PeopleController < ApplicationController
   private
 
   def person_params
-    params.require(:person).permit(:last_name, :first_name, :category)
+    params.require(:person).permit(:last_name, :first_name, :date_birth, :date_dc)
   end
   end

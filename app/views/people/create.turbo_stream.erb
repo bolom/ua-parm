@@ -1,0 +1,2 @@
+<%= turbo_stream.prepend "people", partial: "people/person", locals: { person: @person } %>
+<%= turbo_stream.update Person.new, "" %>

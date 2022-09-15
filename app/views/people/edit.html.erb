@@ -1,15 +1,7 @@
 <div>
   <h1 class="font-bold text-2xl mb-3">Editing Person</h1>
-
-  <div id="<%= dom_id @person %>">
+<%= turbo_frame_tag "person_#{@person.id}" do %>
     <%= render "form", person: @person %>
     <%= link_to "Never Mind", people_path, class: "btn mb-3 bg-gray-100" %>
-  </div>
-</div>
-
-
-<h1 class="font-bold text-2xl">People Manager</h1>
-<!-- add new person -->
-<div class="mt-4">
-  <%= render "form", person: @person %>
+<% end %>
 </div>
