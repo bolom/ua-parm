@@ -14,6 +14,11 @@ class PlantsController < ApplicationController
         .by_genus(params[:genus])
         .ordered
     end
+
+    @grouped_options = {
+  'North America' => [['United States','US'], 'Canada'],
+  'Europe' => ['Denmark','Germany','France']
+}
   end
 
   def new

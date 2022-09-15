@@ -1,21 +1,26 @@
 <turbo-frame id="<%= "plant_#{plant.id}" %>" class="table-row border-b">
-  <div class="table-cell border-b border-slate-100 dark:border-slate-300 p-4 pl-8">
+  <div class="table-cell w-1/2 border-b border-slate-100 dark:border-slate-300 p-4 pl-8">
    <dl class="">
-      <dt class="mt-2 text-lg"><%= link_to plant_name(plant), plant_path(plant), data: { turbo_frame: "_top" } %></dt>
+      <dt class="mt-2 text-2xl"><%= link_to plant_name(plant), plant_path(plant), data: { turbo_frame: "_top" } %></dt>
       <dt class="mt-2">
         <%= link_to image_tag(plant.image), plant_path(plant), data: { turbo_frame: "_top" } %>
       </dt>
       <dd class="mt-2 text-sm">
       <b>Nom(s) vernaculaire(s)</b> : <%=  plant.names.pluck(:label).join(", ") %>
       </dd>
+      <dd class="mt-2 text-sm">
+      <b>Pharmacopoeia (s)</b> : <%=  plant.pharmacopoeia %>
+      </dd>
+      <dd class="mt-2 text-sm">
+      <b>family (s)</b> :<em><%= plant.family.name %></em>
+      </dd>
     </dl>
   </div>
 
-  <div class="table-cell border-b border-slate-100 dark:border-slate-300 p-4 pl-8">
-    <%= plant.pharmacopoeia %>
-  </div>
-  <div class="table-cell border-b border-slate-100 dark:border-slate-300 p-4 pl-8">
-    <em><%= plant.family.name %></em>
+  <div class="table-cell w-1/4 border-b border-slate-100 dark:border-slate-300 p-4 pl-8">
+  <% plant.synonyms.each do  |k, v|  %>
+    <p class="text-sm"><em><%= v.join(", ") %></em></p>
+  <% end %>
   </div>
   <div class="table-cell p-4 pl-8 border-b border-slate-100 dark:border-slate-300">
     <div class="inline-flex space-x-1">

@@ -33,7 +33,6 @@ class Plant < ApplicationRecord
   scope :by_family, ->(value) { where("plants.family_id = ? ", value) if value.present? }
   scope :by_genus, ->(value) { where("plants.genus_id = ? ", value) if value.present? }
   scope :by_species, ->(value) { where("plants.species_id = ? ", value) if value.present? }
-  scope :by_synonym, ->(value) { where("? = ANY (synonym_ids)", value) if value.present? }
 
   scope :search, ->(value) { search_by_scientific(value) if value.present? }
 
@@ -50,13 +49,26 @@ class Plant < ApplicationRecord
 
   end
 
+  def synonyms
+    Species.where(id: synonym_ids).order(name: :asc).pluck(:taxonomic_status, :name).group_by(&:first).map {|k,v| [k, v.map(&:last)]}
+  end
+
   def self.primary_and_synomyms
-    [['Principales',Species.with_plants.collect {|a| [a.name, a.id]}] , ['Synonymes',  Plant.select(:name, :"names.id").synonyms.pluck(:name, :id)]]
+    {
+       'Accepted' => Species.with_plants.pluck(:name, :id),
+       'Synonym' => Plant.synonyms
+   }
   end
 
   def self.synonyms
-    ids = Plant.pluck(:id, :synonym_ids).join(",")
-    ids = ids.split(",").reject(&:empty?)
-    Species.where(id: ids).order(name: :asc)
+    synonyms = []
+    ids = Plant.pluck(:species_id, :synonym_ids)
+    ids.each do |species_id, synonym_ids|
+      synonym_names = Species.where(id: synonym_ids).order(name: :asc).pluck(:name)
+      synonym_names.each do |synonym_name|
+        synonyms << [synonym_name, species_id]
+      end
+    end
+    synonyms
   end
 end
