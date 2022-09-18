@@ -46,4 +46,19 @@ class Plant < ApplicationRecord
     ids = ids.split(",").reject(&:empty?)
     Species.where(id: ids)
   end
+
+  def self.filter(filters)
+    plants = []
+      if filters[:commun].present?
+          plants =  Plant.find(filters[:commun]).order("#{filters[:column]} #{filters[:direction]}")
+      else
+          plants =  Plant.search(filters[:search])
+          .by_plant(filters[:plant])
+          .by_pharmacopoeia(filters[:pharmacopoeia])
+          .by_family(filters[:family])
+          .by_genus(filters[:genus])
+          .order("#{filters[:column]} #{filters[:direction]}")
+      end
+      plants
+    end
 end

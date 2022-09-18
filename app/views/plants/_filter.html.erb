@@ -13,4 +13,9 @@
   <%= form.select :genus, Genus.with_plants.collect {|a| [a.name, a.id]} ,{ include_blank: "Genre" }, {class: "w-full",data: {action: 'filters#submit'}} %>
   <%= form.select :pharmacopoeia, Plant.pharmacopoeia.keys ,{ include_blank: "Pharmacopée" }, {class: "w-full",data: {action: 'filters#submit'}} %>
 </div>
+<div class="">
+  <%= form.selct :column, %>
+  <%= form.selct :direction, %>
+
+</div>
 <% end %>
