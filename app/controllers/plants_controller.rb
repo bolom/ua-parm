@@ -1,24 +1,7 @@
 class PlantsController < ApplicationController
   def index
     @plant = Plant.new
-    @plants  = []
-    if params[:synonym].present?
-      @plants =  Plant.by_synonym(params[:synonym]).ordered
-    elsif params[:commun].present?
-        @plants =  Plant.find(params[:commun])
-    else  @plants =  Plant
-        .search(params[:search])
-        .by_plant(params[:plant])
-        .by_pharmacopoeia(params[:pharmacopoeia])
-        .by_family(params[:family])
-        .by_genus(params[:genus])
-        .ordered
-    end
-
-    @grouped_options = {
-  'North America' => [['United States','US'], 'Canada'],
-  'Europe' => ['Denmark','Germany','France']
-}
+    @plants  = Plant.filter(params)
   end
 
   def new

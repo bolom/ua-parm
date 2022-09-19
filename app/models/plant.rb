@@ -36,6 +36,22 @@ class Plant < ApplicationRecord
 
   scope :search, ->(value) { search_by_scientific(value) if value.present? }
 
+
+  def self.filter(filters)
+    if filters[:commun].present?
+        plants =  Plant.find(filters[:commun]).order("#{filters[:column]} #{filters[:direction]}")
+    else
+        plants =  Plant.search(filters[:search])
+        .by_plant(filters[:plant])
+        .by_pharmacopoeia(filters[:pharmacopoeia])
+        .by_family(filters[:family])
+        .by_genus(filters[:genus])
+        .order("#{filters[:column]} #{filters[:direction]}")
+    end
+    plants
+  end
+
+
   def name
     species.name
   end
