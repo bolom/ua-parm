@@ -9,18 +9,19 @@
       <b>Nom(s) vernaculaire(s)</b> : <%=  plant.names.pluck(:label).join(", ") %>
       </dd>
       <dd class="mt-2 text-sm">
-      <b>Pharmacopoeia (s)</b> : <%=  plant.pharmacopoeia %>
+      <b>Synonyme(s)</b> :
+      <% plant.synonyms.each do  |k, v|  %>
+        <p class="text-sm"><em><%= v.join(", ") %></em></p>
+      <% end %>
       </dd>
       <dd class="mt-2 text-sm">
-      <b>family (s)</b> :<em><%= plant.family.name %></em>
+      <b>Famille (s)</b> :<em><%= plant.family.name %></em>
       </dd>
     </dl>
   </div>
 
   <div class="table-cell w-1/4 border-b border-slate-100 dark:border-slate-300 p-4 pl-8">
-  <% plant.synonyms.each do  |k, v|  %>
-    <p class="text-sm"><em><%= v.join(", ") %></em></p>
-  <% end %>
+<%=  plant.pharmacopoeia %>
   </div>
   <div class="table-cell p-4 pl-8 border-b border-slate-100 dark:border-slate-300">
     <div class="inline-flex space-x-1">

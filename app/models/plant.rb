@@ -31,15 +31,15 @@ class Plant < ApplicationRecord
   scope :by_species, ->(value) { where("plants.species_id = ? ", value) if value.present? }
 
   scope :search, ->(value) {
-    joins(:species, :name_plants, :names).where("? ILIKE ANY (synonym_names) OR species.name ILIKE ? OR  names.label ILIKE ?","#{value}", "%#{value}%", "%#{value}%").uniq  if value.present?
+    joins(:species, :name_plants, :names).where("? ILIKE ANY (synonym_names) OR species.name ILIKE ? OR  names.label ILIKE ? ","#{value}", "%#{value}%", "%#{value}%", "#{value}")  if value.present?
   }
 
   def self.filter(filters)
-    if filters[:commun].present?
-        plants =  Plant.find(filters[:commun]).order("#{filters[:column]} #{filters[:direction]}")
-    else
-        plants =  Plant.search(filters[:search])
-    end
+    plants =  Plant.search(filters[:search])
+    .by_pharmacopoeia(filters[:pharmacopoeia])
+    .by_family(filters[:family])
+    .by_genus(filters[:genus])
+    .order("#{filters[:column]} #{filters[:direction]}").ordered.uniq
     plants
   end
 
