@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_09_09_150552) do
+ActiveRecord::Schema[7.0].define(version: 2022_09_19_195409) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -206,9 +206,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_09_150552) do
     t.integer "species_id"
     t.integer "genus_id"
     t.integer "family_id"
-    t.text "synonym_ids", default: [], array: true
+    t.string "synonym_ids", default: [], array: true
+    t.text "synonym_names", default: [], array: true
     t.index ["family_id"], name: "index_plants_on_family_id"
     t.index ["genus_id"], name: "index_plants_on_genus_id"
+    t.index ["synonym_names"], name: "index_plants_on_synonym_names", using: :gin
   end
 
   create_table "sources", force: :cascade do |t|

@@ -1,5 +1,4 @@
 class Plant < ApplicationRecord
-  include PgSearch::Model
   belongs_to :species , class_name: "Species", optional: true
   belongs_to :genus , class_name: "Genus", optional: true
   belongs_to :family, optional: true
@@ -23,9 +22,6 @@ class Plant < ApplicationRecord
   accepts_nested_attributes_for :names, reject_if: :all_blank, allow_destroy: true
 
 
-  pg_search_scope :search_by_scientific,
-    against: :scientific,
-    using: { tsearch: { prefix: true } }
 
   scope :ordered, -> { joins(:species).order(name: :asc) }
   scope :by_pharmacopoeia, -> (value) { send(value) if value.in?(pharmacopoeia.keys) }
@@ -34,19 +30,15 @@ class Plant < ApplicationRecord
   scope :by_genus, ->(value) { where("plants.genus_id = ? ", value) if value.present? }
   scope :by_species, ->(value) { where("plants.species_id = ? ", value) if value.present? }
 
-  scope :search, ->(value) { search_by_scientific(value) if value.present? }
-
+  scope :search, ->(value) {
+    joins(:species, :name_plants, :names).where("? ILIKE ANY (synonym_names) OR species.name ILIKE ? OR  names.label ILIKE ?","#{value}", "%#{value}%", "%#{value}%").uniq  if value.present?
+  }
 
   def self.filter(filters)
     if filters[:commun].present?
         plants =  Plant.find(filters[:commun]).order("#{filters[:column]} #{filters[:direction]}")
     else
         plants =  Plant.search(filters[:search])
-        .by_plant(filters[:plant])
-        .by_pharmacopoeia(filters[:pharmacopoeia])
-        .by_family(filters[:family])
-        .by_genus(filters[:genus])
-        .order("#{filters[:column]} #{filters[:direction]}")
     end
     plants
   end

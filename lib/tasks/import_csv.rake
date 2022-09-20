@@ -152,7 +152,9 @@ end
 task update_synonyms_for_plants: [:environment] do
   Plant.all.each do |plant|
     ids = plant.species.synonyms.pluck(:synonymable_copy_id)
-    plant.update(synonym_ids: ids )
+    names = plant.species.synonyms.joins(:copy).pluck(:"species.name")
+
+    plant.update(synonym_ids: ids, synonym_names: names )
   end
 end
 

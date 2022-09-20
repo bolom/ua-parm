@@ -1,16 +1,29 @@
-<div class="form-group mb-6  w-full">
+<div class="form-group mb-6  w-full" data-controller="toggle">
+
 <%= form_with(url: plants_path,
                 class: "mt-5 mb-5",
                 method: :get, data: { controller: "filters", filters_target: "form", turbo_frame: "plants" }) do |form| %>
-<div class="mb-5 w-full flex flex-col">
-  <div class="mb-5 inline-flex space-x-2">
-    <%= form.select :plant,  grouped_options_for_select(Plant.primary_and_synomyms) ,{ include_blank: "Nom Scientique" }, {class: "w-full" ,data: { action: 'filters#submit'}} %>
-    <%= form.select :commun, Name.names_plants ,{ include_blank: "Nom Vernaculaire" }, {class: "w-full", data: { action: 'filters#submit'}} %>
+  <div class="mb-5 w-full flex flex-col">
+    <div class="mb-5">
+      <div class="">
+          <div class="flex item-starts space-x-5">
+            <%= form.text_field :search, class: "w-full", placeholder: "Rechercher une plante par son nom latin, son nom vernaculaire ou un de ses synonyes",  data: { action: "input->filters#submit" } , autocomplete: "off"  %>
+            <button data-action="click->toggle#toggle" data-target="toggle.sidebar-1" class="bg-cyan-500 text-white active:bg-cyan-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150 flex space-x-2 items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 13.5V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 9.75V10.5" />
+              </svg>
+              <span>
+                filtrer
+              </span>
+            </button>
+          </div>
+      </div>
+
+    </div>
   </div>
-</div>
-<div class="mb-5 inline-flex  space-x-2 w-full">
-  <%= form.select :family, Family.with_plants.collect {|a| [a.name, a.id]} ,{ include_blank: "Famille" }, {class: "w-full",data: { action: 'filters#submit'}} %>
-  <%= form.select :genus, Genus.with_plants.collect {|a| [a.name, a.id]} ,{ include_blank: "Genre" }, {class: "w-full",data: {action: 'filters#submit'}} %>
-  <%= form.select :pharmacopoeia, Plant.pharmacopoeia.keys ,{ include_blank: "Pharmacopée" }, {class: "w-full",data: {action: 'filters#submit'}} %>
-</div>
+  <div class="mb-5 inline-flex  space-x-2 w-full hidden"  data-toggle-target="content">
+    <%= form.select :family, Family.with_plants.collect {|a| [a.name, a.id]} ,{ include_blank: "Famille" }, {class: "w-full",data: { action: 'filters#submit'}} %>
+    <%= form.select :genus, Genus.with_plants.collect {|a| [a.name, a.id]} ,{ include_blank: "Genre" }, {class: "w-full",data: {action: 'filters#submit'}} %>
+    <%= form.select :pharmacopoeia, Plant.pharmacopoeia.keys ,{ include_blank: "Pharmacopée" }, {class: "w-full",data: {action: 'filters#submit'}} %>
+  </div>
 <% end %>
