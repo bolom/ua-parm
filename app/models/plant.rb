@@ -1,7 +1,12 @@
 class Plant < ApplicationRecord
   belongs_to :species , class_name: "Species", optional: true
+  delegate :name, to: :species
+
   belongs_to :genus , class_name: "Genus", optional: true
+  delegate   :name, to: :genus, prefix: :genus
+
   belongs_to :family, optional: true
+  delegate   :name, to: :family, prefix: :family
 
   enum :pharmacopoeia, [:tramil, :french, :nothing, :ayurveda]
 
@@ -44,15 +49,11 @@ class Plant < ApplicationRecord
   end
 
 
-  def name
-    species.name
-  end
-
   def image
     if species.images.empty?
       ""
     else
-      species.images.first.variant(resize_to_limit: [200, 200])
+      species.images.first.variant(resize_to_limit: [400, 400])
     end
 
   end
