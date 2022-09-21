@@ -31,7 +31,7 @@ class Plant < ApplicationRecord
   scope :by_species, ->(value) { where("plants.species_id = ? ", value) if value.present? }
 
   scope :search, ->(value) {
-    joins(:species, :name_plants, :names).where("? ILIKE ANY (synonym_names) OR species.name ILIKE ? OR  names.label ILIKE ? ","#{value}", "%#{value}%", "%#{value}%", "#{value}")  if value.present?
+    joins(:species, :name_plants, :names).where("? ILIKE ANY (synonym_names) OR species.name ILIKE ? OR  names.label ILIKE ? ","#{value}", "%#{value}%", "%#{value}%")  if value.present?
   }
 
   def self.filter(filters)

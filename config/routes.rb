@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+    root "plants#index"
 
    resources :families,  only: [:show, :index]
    resources :species,  only: [:show, :index]
@@ -11,5 +12,4 @@ Rails.application.routes.draw do
    resources :areas
    resources :taxa,  only: [:index]
 
-    root "plants#index"
   end
