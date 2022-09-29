@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_08_04_131631) do
+ActiveRecord::Schema[7.0].define(version: 2022_09_09_150552) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -115,6 +115,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_04_131631) do
     t.boolean "fungi"
     t.string "fq_id"
     t.string "reference"
+    t.string "taxonomic_status"
+    t.string "nomenclatural_code"
+    t.string "lifeform"
+    t.string "climate"
+    t.boolean "hybrid"
   end
 
   create_table "genera", force: :cascade do |t|
@@ -133,6 +138,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_04_131631) do
     t.string "reference"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "taxonomic_status"
+    t.string "nomenclatural_code"
+    t.string "lifeform"
+    t.string "climate"
+    t.boolean "hybrid"
     t.index ["family_id"], name: "index_genera_on_family_id"
   end
 
@@ -231,6 +241,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_04_131631) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "description"
+    t.string "taxonomic_status"
+    t.string "nomenclatural_code"
+    t.string "lifeform"
+    t.string "climate"
+    t.boolean "hybrid"
     t.index ["genus_id"], name: "index_species_on_genus_id"
   end
 

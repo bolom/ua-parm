@@ -11,8 +11,10 @@ class Species < ApplicationRecord
   has_one :distribution , as: :distributionable, class_name: "Distribution"
   has_one :plant
 
-  scope :with_plants, -> { joins(:plant).order(name: :asc).uniq }
+  scope :with_plants, -> { select(:name, :id).joins(:plant).distinct.order(name: :asc).uniq}
   scope :ordered, -> { order(name: :asc) }
+
+  #Plant.select(:name).distinct.joins(:citations,:species).order('species.name': :asc).pluck('species.name', 'plants.id')
 
 
   def ksp
