@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_08_04_131631) do
+ActiveRecord::Schema[7.0].define(version: 2022_09_23_145648) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -115,6 +115,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_04_131631) do
     t.boolean "fungi"
     t.string "fq_id"
     t.string "reference"
+    t.string "taxonomic_status"
+    t.string "nomenclatural_code"
+    t.string "lifeform"
+    t.string "climate"
+    t.boolean "hybrid"
   end
 
   create_table "genera", force: :cascade do |t|
@@ -133,7 +138,21 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_04_131631) do
     t.string "reference"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "taxonomic_status"
+    t.string "nomenclatural_code"
+    t.string "lifeform"
+    t.string "climate"
+    t.boolean "hybrid"
     t.index ["family_id"], name: "index_genera_on_family_id"
+  end
+
+  create_table "images", force: :cascade do |t|
+    t.string "imageable_type"
+    t.bigint "imageable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "position", default: 0
+    t.index ["imageable_type", "imageable_id"], name: "index_images_on_imageable"
   end
 
   create_table "name_citations", force: :cascade do |t|
@@ -196,9 +215,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_04_131631) do
     t.integer "species_id"
     t.integer "genus_id"
     t.integer "family_id"
-    t.text "synonym_ids", default: [], array: true
+    t.string "synonym_ids", default: [], array: true
+    t.text "synonym_names", default: [], array: true
     t.index ["family_id"], name: "index_plants_on_family_id"
     t.index ["genus_id"], name: "index_plants_on_genus_id"
+    t.index ["synonym_names"], name: "index_plants_on_synonym_names", using: :gin
   end
 
   create_table "sources", force: :cascade do |t|
@@ -231,6 +252,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_04_131631) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "description"
+    t.string "taxonomic_status"
+    t.string "nomenclatural_code"
+    t.string "lifeform"
+    t.string "climate"
+    t.boolean "hybrid"
     t.index ["genus_id"], name: "index_species_on_genus_id"
   end
 

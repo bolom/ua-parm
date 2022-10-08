@@ -10,7 +10,6 @@
   </div>
   <!-- filter-->
   <div class="form-group mb-6">
-  <span>Filtrer par :</span>
    <%= form_with(url: citations_path,
                     class: "mt-5 mb-5",
                     method: :get, data: { controller: "filters", filters_target: "form", turbo_frame: "citations" }) do |form| %>

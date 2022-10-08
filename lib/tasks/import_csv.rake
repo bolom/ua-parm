@@ -8,47 +8,14 @@ task initial_setup: [:environment] do
   Rake::Task["import_plants_csv"].invoke
   Rake::Task["import_biblio_csv"].invoke
   Rake::Task["import_citation_csv"].invoke
+
+  #Rake::Task["fill_up_missing_info_genera"].invoke
+  #Rake::Task["fill_up_missing_info_families"].invoke
+  #Rake::Task["fill_up_missing_info_species"].invoke
+  #Rake::Task["update_synonyms_for_plants"].invoke
 end
 
-task import_common_name_plants_csv: [:environment] do
-  #plantes
-  dataTable = CSV.table("#{Rails.root}/lib/tasks/plantes.csv")
-  dataTable.each do |data|
-    nui_plantes = data[:nui_plantes]
-    nui_plantes = nui_plantes.remove "nui_pla_000"
-    nui_plantes = nui_plantes.to_i
-    p = Plant.find_by(nui_plant: nui_plantes.to_i)
-    nom_vernaculaires = data[:nom_vernaculaire]
-    nom_vernaculaires = nom_vernaculaires.split(",")
-    nom_vernaculaires.each do |nom_vernaculaire|
-      nom_vernaculaire = nom_vernaculaire.downcase.squish
-      name = Name.find_or_create_by(label: nom_vernaculaire )
-      p.names << name
-    end
-  end
 
-  #citations
-  dataTable = CSV.table("#{Rails.root}/lib/tasks/citations.csv")
-  dataTable.each do |biblio|
-    # retrouver plant
-    nui_plant = biblio[:lien_vers_nui_plantes]
-    nui_plant = nui_plant.remove "nui_pla_000"
-    plant = Plant.find_by!(nui_plant: nui_plant)
-
-    # retrouver la Source
-    nui_source = biblio[:lien_vers_nui_sources] #nui_sou_00001
-    source = Source.find_by(nui_source: nui_source)
-    names = biblio[:noms_utiliss_dans_la_source]
-    citation = source.citations.find_or_initialize_by(text:biblio[:citation], page:biblio[:page], note:biblio[:note])
-
-    names.split(",").each do |name|
-      name = name.downcase.squish
-      n = Name.find_or_create_by(label: name)
-      plant.names << n  # plants
-      citation.names << n # sources
-    end
- end
-end
 
 task import_plants_csv: [:environment] do
   dataTable = CSV.table("#{Rails.root}/lib/tasks/plantes.csv")
@@ -59,8 +26,7 @@ task import_plants_csv: [:environment] do
     nui_plantes = data[:nui_plantes]
     nui_plantes = nui_plantes.remove "nui_pla_000"
     nui_plantes = nui_plantes.to_i
-    fetch_data_species(genus, species)
-    s = Species.find_by(name: "#{genus} #{species}")
+    s = fetch_data_species(genus, species)
     g = s.genus
     f = g.family
     p = Plant.find_or_create_by(nui_plant: nui_plantes.to_i)
@@ -178,9 +144,7 @@ end
 
 task fill_up_missing_info_species: [:environment] do
   Species.where(source: nil).each do |s|
-    genus = s.name.split[0]
-    species = s.name.split[1]
-    fetch_data_species(genus, species)
+    fetch_data_species(nil, nil, s.fq_id)
   end
 end
 
@@ -188,7 +152,9 @@ end
 task update_synonyms_for_plants: [:environment] do
   Plant.all.each do |plant|
     ids = plant.species.synonyms.pluck(:synonymable_copy_id)
-    plant.update(synonym_ids: ids )
+    names = plant.species.synonyms.joins(:copy).pluck(:"species.name")
+
+    plant.update(synonym_ids: ids, synonym_names: names )
   end
 end
 
@@ -221,7 +187,11 @@ def fetch_extra_info(taxon, r)
            fungi: r["fungi"],
            plantae: r["plantae"],
            name: r["name"],
-           nomenclatural_status: r["nomenclaturalStatus"],
+           taxonomic_status: r["taxonomicStatus"],
+           nomenclatural_code: r["nomenclaturalCode"],
+           lifeform: r["lifeform"],
+           climate: r["climate"],
+           hybrid: r["hybrid"],
            reference: r["reference"] )
 end
 
@@ -269,41 +239,37 @@ def fetch_distribution(distribution, taxon)
 end
 
 # recupere les plantes
-def fetch_data_species(genus, species)
-  p "#{genus} - #{species}"
-  r = @powo_client.search("genus:#{genus},species:#{species}" ,{'filters'=>['species_f']})
-  r = r["results"][0]
-  #puts r
+def fetch_data_species(genus, species, fqid = nil)
+
+  if fqid == nil
+    r = @powo_client.search("genus:#{genus},species:#{species}" ,{'filters'=>['species_f']})
+    r = r["results"][0]
+    fqid = r['fqId']
+  end
+
+  r = @powo_client.lookup(fqid,"descriptions,distribution")
+  if r["synonym"] == true
+    old_status = r["taxonomicStatus"]
+    fqId =  r["accepted"]["fqId"]
+    r = @powo_client.lookup(fqId, "descriptions,distribution")
+  end
   #create basic relation
   s = Species.find_or_create_by(fq_id: r['fqId'], name: r['name'])
-  p "Species #{s.id}"
   g = Genus.find_or_create_by(name: r['name'].split[0])
   f = Family.find_or_create_by(name: r['family'])
   s.update!(genus: g)
   g.update!(family: f)
 
   ######
-  ## get images
+  ## get extra information
   ####
-  s.images.destroy_all
-  images = r["images"]
-  images.to_a.each do |image|
-    image_url = "https:#{image["fullsize"]}"
-    i = Down.download(image_url)
-    s.images.attach(io: i, filename: "image.jpg")
-  end
-
-  r = @powo_client.lookup(s.fq_id,"descriptions,distribution")
+  fetch_extra_info(s,r)
 
   ######
   ## get classifactions
   ####
   fetch_classification(r["classification"], "species", species)
 
-  ######
-  ## get extra information
-  ####
-  fetch_extra_info(s,r)
 
   ######
   ## get extra synonyms
@@ -319,9 +285,33 @@ def fetch_data_species(genus, species)
   ## get extra distribution
   ####
   fetch_distribution(r["distribution"], s)
+
+  ######
+  ## get images
+  ####
+
+  p "#{s.name} #{s.synonym}"
+  if s.synonym == false
+    nom = s.name
+    genus = nom.split[0]
+    species = nom.split[1]
+    p "#{genus} - #{species}"
+    r = @powo_client.search("genus:#{genus},species:#{species}" ,{'filters'=>['species_f']})
+    s.images.destroy_all
+    images = r["results"][0]["images"]
+    images.to_a.each do |image|
+      i = s.image.new
+      image_url = "https:#{image["fullsize"]}"
+      p image_url
+      i.attach(io: Down.download(image_url) , filename: "image.jpg")
+      i.save!
+    end
+  end
+  s
 end
 
 def fetch_data_genus(genus)
+  p
   r = @powo_client.search("genus:#{genus.name}" ,{'filters'=>['genus_f']})
   return if  r["results"].nil?
   r = r["results"][0]

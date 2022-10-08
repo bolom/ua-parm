@@ -1,8 +1,13 @@
 class Plant < ApplicationRecord
-  include PgSearch::Model
   belongs_to :species , class_name: "Species", optional: true
+  delegate :name, to: :species
+  delegate :images, to: :species
+
   belongs_to :genus , class_name: "Genus", optional: true
+  delegate   :name, to: :genus, prefix: :genus
+
   belongs_to :family, optional: true
+  delegate   :name, to: :family, prefix: :family
 
   enum :pharmacopoeia, [:tramil, :french, :nothing, :ayurveda]
 
@@ -23,28 +28,58 @@ class Plant < ApplicationRecord
   accepts_nested_attributes_for :names, reject_if: :all_blank, allow_destroy: true
 
 
-  pg_search_scope :search_by_scientific,
-    against: :scientific,
-    using: { tsearch: { prefix: true } }
 
   scope :ordered, -> { joins(:species).order(name: :asc) }
   scope :by_pharmacopoeia, -> (value) { send(value) if value.in?(pharmacopoeia.keys) }
-  scope :by_plant, ->(value) { where("species_id = ? ", value) if value.present? }
-  scope :by_family, ->(value) { where("family_id = ? ", value) if value.present? }
-  scope :by_genus, ->(value) { where("genus_id = ? ", value) if value.present? }
-  scope :by_gspecies, ->(value) { where("species_id = ? ", value) if value.present? }
-  scope :by_synonym, ->(value) { where("? = ANY (synonym_ids)", value) if value.present? }
+  scope :by_plant, ->(value) { where("plants.species_id = ? ", value) if value.present? }
+  scope :by_family, ->(value) { where("plants.family_id = ? ", value) if value.present? }
+  scope :by_genus, ->(value) { where("plants.genus_id = ? ", value) if value.present? }
+  scope :by_species, ->(value) { where("plants.species_id = ? ", value) if value.present? }
 
-  scope :search, ->(value) { search_by_scientific(value) if value.present? }
+  scope :search, ->(value) {
+    joins(:species, :name_plants, :names).where("? ILIKE ANY (synonym_names) OR species.name ILIKE ? OR  names.label ILIKE ? ","#{value}", "%#{value}%", "%#{value}%")  if value.present?
+  }
 
-  def name
-    species.name
+  def self.filter(filters)
+    plants =  Plant.search(filters[:search])
+    .by_pharmacopoeia(filters[:pharmacopoeia])
+    .by_family(filters[:family])
+    .by_genus(filters[:genus])
+    .order("#{filters[:column]} #{filters[:direction]}").ordered.uniq
+    plants
+  end
+
+
+  def image
+    if species.images.empty?
+      ""
+    else
+      species.images.first.picture.variant(resize_to_limit: [400, 400])
+    end
+
+  end
+
+  def synonyms
+    Species.where(id: synonym_ids).order(name: :asc).pluck(:taxonomic_status, :name).group_by(&:first).map {|k,v| [k, v.map(&:last)]}
+  end
+
+  def self.primary_and_synomyms
+    {
+       'Accepted' => Species.with_plants.pluck(:name, :id),
+       'Synonym' => Plant.synonyms
+   }
   end
 
   def self.synonyms
-    ids = Plant.all.pluck(:synonym_ids).join(",")
-    ids = ids.split(",").reject(&:empty?)
-    Species.where(id: ids)
+    synonyms = []
+    ids = Plant.pluck(:species_id, :synonym_ids)
+    ids.each do |species_id, synonym_ids|
+      synonym_names = Species.where(id: synonym_ids).order(name: :asc).pluck(:name)
+      synonym_names.each do |synonym_name|
+        synonyms << [synonym_name, species_id]
+      end
+    end
+    synonyms
   end
 
   def self.filter(filters)

@@ -1,18 +1,17 @@
 require "down"
-
 class Species < ApplicationRecord
-
   belongs_to :genus, optional: true
-
-  has_many_attached :images , dependent: :destroy
+  has_many :images, as: :imageable
   has_many :synonyms , as: :synonymable , dependent: :destroy
 
   has_many :descriptions , as: :descriptionable, class_name: "Description"
   has_one :distribution , as: :distributionable, class_name: "Distribution"
   has_one :plant
 
-  scope :with_plants, -> { joins(:plant).order(name: :asc).uniq }
+  scope :with_plants, -> { select(:name, :id).joins(:plant).distinct.order(name: :asc).uniq}
   scope :ordered, -> { order(name: :asc) }
+
+  accepts_nested_attributes_for :images, reject_if: :all_blank, allow_destroy: true
 
 
   def ksp
