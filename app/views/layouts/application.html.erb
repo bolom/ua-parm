@@ -36,11 +36,11 @@
                />
              </svg>
 
-             <div class="hidden w-full md:flex md:items-center md:w-auto "data-target="toggle.content">
+             <div class="hidden w-full md:flex md:items-center md:w-auto" data-target="toggle.content">
           <ul
             class="flex flex-col mt-4 md:flex-row md:space-x-8 md:mt-0">
               <li>
-                  <%= link_to sanitize("Plantes"), plants_path,  class:  active_class_if_url(plants_path) %>
+                  <%= link_to sanitize("Plantes"), plants_path,  class:  active_class_if_url("plants") %>
               </li>
               <li>
                   <%= link_to sanitize("Bibliographie"), sources_path,   class:  active_class_if_url(sources_path) %>
