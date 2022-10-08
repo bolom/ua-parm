@@ -215,7 +215,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_23_145648) do
     t.integer "species_id"
     t.integer "genus_id"
     t.integer "family_id"
-    t.string "synonym_ids", default: [], array: true
+    t.text "synonym_ids", default: [], array: true
     t.text "synonym_names", default: [], array: true
     t.index ["family_id"], name: "index_plants_on_family_id"
     t.index ["genus_id"], name: "index_plants_on_genus_id"

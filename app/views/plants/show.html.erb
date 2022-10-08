@@ -76,7 +76,7 @@
         <li>
 					<%= link_to source_path(source),
 								data: { turbo_frame: "_top" }  do %>
-								<em><%= source.title %></em> <%= source.authors_full_name %>, <%= source.publication_date %>
+							<%= source.authors_full_name %>,	<em><%= source.title %></em>, <%= source.publication_date %>
 					<% end %>
         </li>
     <% end %>
