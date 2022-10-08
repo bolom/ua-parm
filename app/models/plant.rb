@@ -45,7 +45,6 @@ class Plant < ApplicationRecord
     .by_genus(filters[:genus]).ordered.uniq
   end
 
-
   def image
     if species.images.empty?
       ""
