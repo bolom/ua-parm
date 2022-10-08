@@ -1,7 +1,6 @@
 class PlantsController < ApplicationController
   def index
-    @plant = Plant.new
-    @plants  = Plant.filter(params)
+    @plants  = Plant.filters(params)
   end
 
   def new
