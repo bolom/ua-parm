@@ -27,8 +27,6 @@ class Plant < ApplicationRecord
 
   accepts_nested_attributes_for :names, reject_if: :all_blank, allow_destroy: true
 
-
-
   scope :ordered, -> { joins(:species).order(name: :asc) }
   scope :by_pharmacopoeia, -> (value) { send(value) if value.in?(pharmacopoeia.keys) }
   scope :by_plant, ->(value) { where("plants.species_id = ? ", value) if value.present? }
@@ -40,15 +38,12 @@ class Plant < ApplicationRecord
     joins(:species, :name_plants, :names).where("? ILIKE ANY (synonym_names) OR species.name ILIKE ? OR  names.label ILIKE ? ","#{value}", "%#{value}%", "%#{value}%")  if value.present?
   }
 
-  def self.filter(filters)
-    plants =  Plant.search(filters[:search])
+  def self.filters(filters)
+    Plant.search(filters[:search])
     .by_pharmacopoeia(filters[:pharmacopoeia])
     .by_family(filters[:family])
-    .by_genus(filters[:genus])
-    .order("#{filters[:column]} #{filters[:direction]}").ordered.uniq
-    plants
+    .by_genus(filters[:genus]).ordered.uniq
   end
-
 
   def image
     if species.images.empty?
@@ -82,18 +77,4 @@ class Plant < ApplicationRecord
     synonyms
   end
 
-  def self.filter(filters)
-    plants = []
-      if filters[:commun].present?
-          plants =  Plant.find(filters[:commun]).order("#{filters[:column]} #{filters[:direction]}")
-      else
-          plants =  Plant.search(filters[:search])
-          .by_plant(filters[:plant])
-          .by_pharmacopoeia(filters[:pharmacopoeia])
-          .by_family(filters[:family])
-          .by_genus(filters[:genus])
-          .order("#{filters[:column]} #{filters[:direction]}")
-      end
-      plants
-    end
 end

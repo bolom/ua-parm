@@ -48,9 +48,9 @@
   </div>
   <div class="flex-initial ">
 		<div class="container grid grid-cols-3 gap-2 mx-auto">
-			<% @plant.species.images.each do |image| %>
+			<% @plant.images.each do |image| %>
 					<div class="w-full rounded">
-						<%= image_tag image, class: "object-contain h-fit" %>
+						<%= image_tag image.picture, class: "object-contain h-fit" %>
 					</div>
 			<% end %>
 		</div>
