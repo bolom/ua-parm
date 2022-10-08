@@ -1,6 +1,7 @@
 class Plant < ApplicationRecord
   belongs_to :species , class_name: "Species", optional: true
   delegate :name, to: :species
+  delegate :images, to: :species
 
   belongs_to :genus , class_name: "Genus", optional: true
   delegate   :name, to: :genus, prefix: :genus
@@ -53,7 +54,7 @@ class Plant < ApplicationRecord
     if species.images.empty?
       ""
     else
-      species.images.first.variant(resize_to_limit: [400, 400])
+      species.images.first.picture.variant(resize_to_limit: [400, 400])
     end
 
   end

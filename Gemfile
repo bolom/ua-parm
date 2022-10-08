@@ -83,3 +83,4 @@ gem 'csv'
 gem "aws-sdk-s3", require: false
 gem "sentry-ruby"
 gem "sentry-rails"
+gem 'acts_as_list'

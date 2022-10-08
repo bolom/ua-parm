@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_09_19_195409) do
+ActiveRecord::Schema[7.0].define(version: 2022_09_23_145648) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -144,6 +144,15 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_19_195409) do
     t.string "climate"
     t.boolean "hybrid"
     t.index ["family_id"], name: "index_genera_on_family_id"
+  end
+
+  create_table "images", force: :cascade do |t|
+    t.string "imageable_type"
+    t.bigint "imageable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "position", default: 0
+    t.index ["imageable_type", "imageable_id"], name: "index_images_on_imageable"
   end
 
   create_table "name_citations", force: :cascade do |t|

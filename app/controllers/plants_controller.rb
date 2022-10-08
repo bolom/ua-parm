@@ -26,9 +26,9 @@ class PlantsController < ApplicationController
 
   def edit
     @plant = Plant.find(params[:id])
+    @species = @plant.species
+    @image = @plant.images.new
   end
-
-
 
   def update
     @plant = Plant.find(params[:id])

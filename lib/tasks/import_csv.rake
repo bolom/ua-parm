@@ -300,10 +300,11 @@ def fetch_data_species(genus, species, fqid = nil)
     s.images.destroy_all
     images = r["results"][0]["images"]
     images.to_a.each do |image|
+      i = s.image.new
       image_url = "https:#{image["fullsize"]}"
       p image_url
-      i = Down.download(image_url)
-      s.images.attach(io: i, filename: "image.jpg")
+      i.attach(io: Down.download(image_url) , filename: "image.jpg")
+      i.save!
     end
   end
   s
