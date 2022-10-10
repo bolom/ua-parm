@@ -1,71 +1,23 @@
-<h1 class="text-4xl text-gray-900 mt-6">
-  <%= plant_name(@plant)%>
-</h1>
-<div class="border-t border-gray-200 bg-gray-50 p-2 flex">
-  <div class="flex-none w-200">
-    <dl>
-      <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-        <dt class="text-sm font-medium text-gray-500">
-          family
-        </dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-          <%= link_to family_path(@plant.family),
-                data: { turbo_frame: "_top" }  do %>
-                <em><%= @plant.family.name %></em>   <%= @plant.family.authors.join(' ') %>
-          <% end %>
-        </dd>
-        <!-- Genus -->
-        <dt class="text-sm font-medium text-gray-500">
-          Genus
-        </dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-          <%= link_to genus_path(@plant.genus),
-                data: { turbo_frame: "_top" }  do %>
-                <em><%= @plant.genus.name %></em> <%= @plant.genus.authors.join(' ') %>
-          <% end %>
-        </dd>
-      <dt class="text-sm font-medium text-gray-500">
-        Pharmacopoeia
-      </dt>
-      <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-        <%= @plant.pharmacopoeia %>
-      </dd>
-      <dt class="text-sm font-medium text-gray-500">
-        Vernaculaire
-      </dt>
-      <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-				<ul>
-					<% @plant.names.each do |name| %>
-						<li>
-							<%= link_to  name.label, name_path(name),
-										data: { turbo_frame: "_top" }   %>
-						</li>
-						<% end %>
-				</ul>
-      </dd>
-    </div>
-  </dl>
-  </div>
-  <div class="flex-initial ">
-		<div class="container grid grid-cols-3 gap-2 mx-auto">
-			<% @plant.images.each do |image| %>
-					<div class="w-full rounded">
-						<%= image_tag image.picture, class: "object-contain h-fit" %>
-					</div>
-			<% end %>
-		</div>
-  </div>
+<em><%= @plant.family.name %>  > <%= @plant.genus.name %> </em>
+
+<div class="flex w-full gap-4">
+    <div class= "flex w-1/2">
+        <dl>
+          <dt><h1 class="mt-2 text-3xl"><%= plant_name(@plant)%></h1> </dt>
+          <dd class="mt-4 text-sm">
+          <b>Pharmacopée</b>:  <%=  @plant.pharmacopoeia %>
+          </dd>
+          <dd class="mt-2 text-sm">
+            <b>Nom(s) vernaculaire(s)</b>: <%= @plant.names.pluck(:label).join(", ") %>
+          </dd>
+        </dl>
+      </div>
+
+      <div class="flex w-1/2 ">
+      	<%= image_tag(@plant.image) %>
+      </div>
 </div>
-<div class="p2">
-  <h2 class="text-2xl text-gray-900 mt-6 mb-2">Synonyms</h2>
-  <ul class="grid grid-cols-2 gap-2">
-    <% @plant.species.synonyms.each do |synonym| %>
-        <li>
-          <em><%= synonym.copy.name %></em> <%= synonym.copy.authors.join(' ') %>
-        </li>
-    <% end %>
-  </ul>
-</div>
+
 
 <!-- Bibliographie -->
 <% unless @plant.sources.empty? %>
@@ -76,13 +28,16 @@
         <li>
 					<%= link_to source_path(source),
 								data: { turbo_frame: "_top" }  do %>
-							<%= source.authors_full_name %>,	<em><%= source.title %></em>, <%= source.publication_date %>
+							<%= source.authors_full_name %>,	<em><%= source.title %></em>, <%= source.publication_date %>, <%= source.edition_reference %>
 					<% end %>
         </li>
     <% end %>
   </ul>
 </div>
 <% end %>
+
+<%= @plant.species.description %>
+
 <!-- Descriptions -->
 <% unless @description.blank? %>
 <div class="border-t border-gray-200 bg-gray-50 p2 mt-6">
@@ -111,4 +66,12 @@
       </dl>
     <% end %>
   </div>
+</div>
+
+
+<!--All images -->
+<div class="my-10 grid grid-cols-3 gap-2">
+  <% @plant.images.each do |image| %>
+        <%= image_tag image.picture %>
+  <% end %>
 </div>
