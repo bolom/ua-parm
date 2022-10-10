@@ -42,7 +42,9 @@
         <%= link_to source.title, source_path(source), data: { turbo_frame: "_top" } %>
        </div>
        <div class="bg-gray-50 pt-1 pl-5 pr-5 w-full">
-          <%= authors(source) %>  (<%= source.publication_date %>). <i><%= source.edition_reference %> </i>
+
+          <%= source.authors_full_name %>,	<em><%= source.title %></em>, <%= source.publication_date %>, <%= source.edition_reference %>
+
        </div>
        <div class="bg-gray-50 p-1 pl-5 pr-5 w-full">
          <em><strong><%= source.plants_names %></strong></em>

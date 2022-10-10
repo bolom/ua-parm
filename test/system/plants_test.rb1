@@ -1,0 +1,85 @@
+require "application_system_test_case"
+
+class PlantsTest < ApplicationSystemTestCase
+  setup do
+    @plant = plants(:first)
+  end
+
+    test "Searching a plant (full)"
+      visit plants_path
+      assert_selector "li" text: "Plantes", "Bibliographie", "Citations", "Auteurs"
+      fill_in "Rechercher une plante ... ", with: "armoise"
+      have_select "Pharmacopeia", with: "nothing"
+      click_on "Filter", match: :first
+      have_select "Famille", with: "Euphorbiaceae Juss."
+      have_select "Genre", with: "Acalypha L."
+      click_on "Acalypha arvensis Poepp."
+      assert_selector "li" text: "Plantes", "Bibliographie", "Citations", "Auteurs"
+      assert_text "h1", text:"Acalypha arvensis Poepp."
+    end
+
+    test "Searching a plant with only keywords"
+      visit plants_path
+      assert_selector "li" text: "Plantes", "Bibliographie", "Citations", "Auteurs"
+      fill_in "Rechercher une plante ... ", with: "armoise"$  click_on "Acalypha arvensis Poepp."
+      assert_selector "li" text: "Plantes", "Bibliographie", "Citations", "Auteurs"
+      assert_text "h1", text:"Acalypha arvensis Poepp."
+    end
+
+    test "Searching a plant with only Pharmacopeia"
+      visit plants_path
+      assert_selector "li" text: "Plantes", "Bibliographie", "Citations", "Auteurs"
+      have_select "Pharmacopeia", with: "nothing"
+      click_on "Acalypha arvensis Poepp."
+      assert_selector "li" text: "Plantes", "Bibliographie", "Citations", "Auteurs"
+      assert_text "h1", text:"Acalypha arvensis Poepp."
+    end
+
+    test "Searching a plant with only Filters (Famille&Genre)"
+      visit plants_path
+      click_on "Filter", match: :first
+      have_select "Famille", with: "Euphorbiaceae Juss."
+      have_select "Genre", with: "Acalypha L."
+      click_on "Acalypha arvensis Poepp."
+      assert_selector "li" text: "Plantes", "Bibliographie", "Citations", "Auteurs"
+      assert_text "h1", text:"Acalypha arvensis Poepp."
+    end
+
+    test "Searching a plant with only Filters (Famille only)"
+      visit plants_path
+      click_on "Filter", match: :first
+      have_select "Famille", with: "Euphorbiaceae Juss."
+      click_on "Acalypha arvensis Poepp."
+      assert_selector "li" text: "Plantes", "Bibliographie", "Citations", "Auteurs"
+      assert_text "h1", text:"Acalypha arvensis Poepp."
+    end
+
+    test "Searching a plant with only Filters (Genre only)"
+      visit plants_path
+      click_on "Filter", match: :first
+      have_select "Genre", with: "Acalypha L."
+      click_on "Acalypha arvensis Poepp."
+      assert_selector "li" text: "Plantes", "Bibliographie", "Citations", "Auteurs"
+      assert_text "h1", text:"Acalypha arvensis Poepp."
+    end
+
+    test "Showing a plant with button svg xmlns"
+      visit plants_path
+      assert_selector "li" text: "Plantes", "Bibliographie", "Citations", "Auteurs"
+      click_on "svg xmlns", match: :second
+      assert_selector "h1", text: "Acalypha arvensis Poepp."
+    end
+
+    test "Updating a plant with button svg xmlns"
+      visit plants_path
+      assert_selector "li" text: "Plantes", "Bibliographie", "Citations", "Auteurs"
+      click_on "svg xmlns", match: :first
+      assert_selector "li" text: "Plantes", "Bibliographie", "Citations", "Auteurs"
+      assert_selector "h1", text: "Acalypha arvensis Poepp."
+      fill_in "Créer un nouveau nom commun", with: "Acalypha arvensis Poepp. Update"
+      have_select "Pharmacopeia", with: "french"
+      click_on "Save Changes"
+      assert_selector "li" text: "Plantes", "Bibliographie", "Citations", "Auteurs"
+      assert_selector "h1", text: "Acalypha arvensis Poepp. Update"
+      assert_text "Acalypha arvensis Poepp. Update"
+    end
