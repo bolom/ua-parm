@@ -9,10 +9,10 @@ task initial_setup: [:environment] do
   Rake::Task["import_biblio_csv"].invoke
   Rake::Task["import_citation_csv"].invoke
 
-  #Rake::Task["fill_up_missing_info_genera"].invoke
-  #Rake::Task["fill_up_missing_info_families"].invoke
-  #Rake::Task["fill_up_missing_info_species"].invoke
-  #Rake::Task["update_synonyms_for_plants"].invoke
+  Rake::Task["fill_up_missing_info_genera"].invoke
+  Rake::Task["fill_up_missing_info_families"].invoke
+  Rake::Task["fill_up_missing_info_species"].invoke
+  Rake::Task["update_synonyms_for_plants"].invoke
 end
 
 
